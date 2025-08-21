@@ -1,0 +1,1122 @@
+{
+  "concepts": {
+    "linear_algebra": {
+      "name": "Linear Algebra",
+      "description": "Foundation of matrix operations, vector spaces, and linear transformations",
+      "difficulty": 1,
+      "category": "mathematics",
+      "prerequisites": [],
+      "leads_to": ["attention_mechanism", "state_space_models", "linear_attention"],
+      "properties": {
+        "complexity": "O(n³) for matrix multiplication",
+        "key_operations": ["matrix_multiplication", "eigendecomposition", "linear_transformations"]
+      },
+      "resources": ["3Blue1Brown Linear Algebra", "Gilbert Strang Course"]
+    },
+    "calculus": {
+      "name": "Calculus",
+      "description": "Derivatives, integrals, and continuous mathematics",
+      "difficulty": 1,
+      "category": "mathematics",
+      "prerequisites": [],
+      "leads_to": ["backpropagation", "state_space_models", "optimization"],
+      "properties": {
+        "key_concepts": ["derivatives", "chain_rule", "integration"],
+        "applications": ["gradient_computation", "continuous_systems"]
+      },
+      "resources": ["Khan Academy Calculus", "MIT OCW"]
+    },
+    "probability": {
+      "name": "Probability & Statistics",
+      "description": "Probability distributions, information theory, and statistical inference",
+      "difficulty": 1,
+      "category": "mathematics",
+      "prerequisites": [],
+      "leads_to": ["attention_mechanism", "mixture_of_experts", "routing"],
+      "properties": {
+        "distributions": ["normal", "exponential", "softmax"],
+        "concepts": ["entropy", "kl_divergence", "bayesian_inference"]
+      },
+      "resources": ["Pattern Recognition and ML by Bishop"]
+    },
+    "neural_networks": {
+      "name": "Neural Network Fundamentals",
+      "description": "Feedforward networks, activation functions, and backpropagation",
+      "difficulty": 2,
+      "category": "deep_learning",
+      "prerequisites": ["linear_algebra", "calculus", "probability"],
+      "leads_to": ["attention_mechanism", "transformers", "mixture_of_experts"],
+      "properties": {
+        "activation_functions": ["relu", "sigmoid", "tanh", "gelu"],
+        "optimization": ["sgd", "adam", "learning_rate_scheduling"]
+      },
+      "resources": ["Deep Learning by Goodfellow", "CS231n Course"]
+    },
+    "profiling": {
+      "name": "Performance Profiling",
+      "description": "Measuring latency, memory, and computational bottlenecks",
+      "difficulty": 2,
+      "category": "measurement",
+      "prerequisites": ["neural_networks"],
+      "leads_to": ["bottleneck_analysis", "optimization_targets"],
+      "properties": {
+        "tools": ["PyTorch Profiler", "NVIDIA Nsight", "nvtop"],
+        "metrics": ["latency", "throughput", "memory_usage", "flops"]
+      },
+      "resources": ["PyTorch Profiler Docs", "NVIDIA Nsight Guide"]
+    },
+    "bottleneck_analysis": {
+      "name": "Bottleneck Analysis",
+      "description": "Identifying performance limiting factors in LLM inference",
+      "difficulty": 3,
+      "category": "measurement",
+      "prerequisites": ["profiling", "attention_mechanism"],
+      "leads_to": ["memory_bandwidth", "compute_bound", "io_optimization"],
+      "properties": {
+        "common_bottlenecks": ["attention_computation", "memory_transfers", "kv_cache"],
+        "analysis_methods": ["roofline_model", "flamegraph", "timeline_analysis"]
+      },
+      "resources": ["Roofline Model Paper", "Performance Analysis Guide"]
+    },
+    "attention_mechanism": {
+      "name": "Attention Mechanism",
+      "description": "Query-Key-Value paradigm for selective information processing",
+      "difficulty": 3,
+      "category": "transformer",
+      "prerequisites": ["neural_networks", "linear_algebra"],
+      "leads_to": ["standard_attention", "multi_head_attention", "positional_encoding"],
+      "properties": {
+        "formula": "Attention(Q,K,V) = softmax(QK^T/√d)V",
+        "complexity": "O(N²d)",
+        "memory": "O(N²)"
+      },
+      "resources": ["Attention Is All You Need", "Illustrated Transformer"]
+    },
+    "standard_attention": {
+      "name": "Standard Self-Attention",
+      "description": "Full attention computation with quadratic complexity",
+      "difficulty": 3,
+      "category": "attention",
+      "prerequisites": ["attention_mechanism"],
+      "leads_to": ["flash_attention", "linear_attention", "sparse_attention"],
+      "properties": {
+        "complexity": "O(N²d)",
+        "memory": "O(N²)",
+        "quality": "100% (baseline)"
+      },
+      "resources": ["Transformer Paper", "Attention Visualization"]
+    },
+    "multi_head_attention": {
+      "name": "Multi-Head Attention",
+      "description": "Parallel attention heads for diverse representation learning",
+      "difficulty": 3,
+      "category": "attention",
+      "prerequisites": ["attention_mechanism"],
+      "leads_to": ["grouped_query_attention", "multi_query_attention"],
+      "properties": {
+        "heads": "typically 8-32",
+        "benefit": "diverse attention patterns",
+        "cost": "increased parameters"
+      },
+      "resources": ["Transformer Architecture Deep Dive"]
+    },
+    "kv_cache": {
+      "name": "Key-Value Cache",
+      "description": "Caching mechanism for autoregressive generation efficiency",
+      "difficulty": 3,
+      "category": "optimization",
+      "prerequisites": ["attention_mechanism"],
+      "leads_to": ["kv_cache_optimization", "paged_attention", "streaming_llm"],
+      "properties": {
+        "memory_growth": "O(batch * layers * heads * seq_len * head_dim)",
+        "purpose": "avoid recomputation",
+        "challenge": "memory bottleneck"
+      },
+      "resources": ["KV Cache Explained", "Memory Management in LLMs"]
+    },
+    "flash_attention": {
+      "name": "FlashAttention",
+      "description": "IO-aware attention algorithm optimizing memory bandwidth",
+      "difficulty": 4,
+      "category": "efficient_attention",
+      "prerequisites": ["standard_attention", "memory_bandwidth"],
+      "leads_to": ["flash_attention_2", "flash_attention_3"],
+      "properties": {
+        "speedup": "2-4x typical",
+        "memory": "O(N) instead of O(N²)",
+        "technique": "tiling and kernel fusion"
+      },
+      "resources": ["FlashAttention Paper", "Tri Dao's Tutorial"]
+    },
+    "flash_attention_2": {
+      "name": "FlashAttention-2",
+      "description": "Improved work partitioning and parallelization",
+      "difficulty": 4,
+      "category": "efficient_attention",
+      "prerequisites": ["flash_attention"],
+      "leads_to": ["flash_attention_3"],
+      "properties": {
+        "improvement": "2x faster than v1",
+        "technique": "better GPU utilization",
+        "support": "variable sequence lengths"
+      },
+      "resources": ["FlashAttention-2 Paper"]
+    },
+    "flash_attention_3": {
+      "name": "FlashAttention-3",
+      "description": "Asynchronous computation with FP8 support",
+      "difficulty": 5,
+      "category": "efficient_attention",
+      "prerequisites": ["flash_attention_2", "quantization"],
+      "leads_to": ["production_optimization"],
+      "properties": {
+        "features": ["producer-consumer async", "FP8 quantization", "Hopper optimization"],
+        "speedup": "1.5-2x over v2"
+      },
+      "resources": ["FlashAttention-3 Paper"]
+    },
+    "linear_attention": {
+      "name": "Linear Attention",
+      "description": "Approximate attention with linear complexity using kernel methods",
+      "difficulty": 4,
+      "category": "efficient_attention",
+      "prerequisites": ["standard_attention", "kernel_methods"],
+      "leads_to": ["performers", "rwkv", "retnet"],
+      "properties": {
+        "complexity": "O(Nd²)",
+        "memory": "O(d²)",
+        "quality": "85-95% task dependent"
+      },
+      "resources": ["Linear Attention Survey", "Performers Paper"]
+    },
+    "kernel_methods": {
+      "name": "Kernel Methods",
+      "description": "Feature mapping techniques for approximating softmax",
+      "difficulty": 3,
+      "category": "mathematics",
+      "prerequisites": ["linear_algebra", "probability"],
+      "leads_to": ["linear_attention", "random_features"],
+      "properties": {
+        "types": ["polynomial", "RBF", "random_features"],
+        "purpose": "linearize softmax computation"
+      },
+      "resources": ["Kernel Methods in ML", "Random Features Paper"]
+    },
+    "performers": {
+      "name": "Performers",
+      "description": "Linear attention using random feature approximation",
+      "difficulty": 4,
+      "category": "efficient_attention",
+      "prerequisites": ["linear_attention", "random_features"],
+      "leads_to": ["hybrid_architectures"],
+      "properties": {
+        "technique": "FAVOR+ algorithm",
+        "quality": "~90% of standard attention",
+        "best_for": "long sequences"
+      },
+      "resources": ["Performers Paper", "FAVOR+ Explained"]
+    },
+    "rwkv": {
+      "name": "RWKV",
+      "description": "Linear complexity RNN with parallel training",
+      "difficulty": 4,
+      "category": "linear_models",
+      "prerequisites": ["linear_attention", "recurrent_networks"],
+      "leads_to": ["hybrid_architectures", "state_space_models"],
+      "properties": {
+        "complexity": "O(N)",
+        "training": "parallelizable",
+        "inference": "constant memory"
+      },
+      "resources": ["RWKV Paper", "RWKV Implementation"]
+    },
+    "sparse_attention": {
+      "name": "Sparse Attention",
+      "description": "Selective attention computation on subset of positions",
+      "difficulty": 4,
+      "category": "efficient_attention",
+      "prerequisites": ["standard_attention"],
+      "leads_to": ["local_attention", "dilated_attention", "bigbird"],
+      "properties": {
+        "patterns": ["local", "strided", "random", "global"],
+        "complexity": "O(N√N) to O(N log N)",
+        "quality": "90-98% task dependent"
+      },
+      "resources": ["Sparse Transformer Paper", "Efficient Transformers Survey"]
+    },
+    "local_attention": {
+      "name": "Local/Sliding Window Attention",
+      "description": "Attention restricted to nearby tokens",
+      "difficulty": 3,
+      "category": "sparse_patterns",
+      "prerequisites": ["sparse_attention"],
+      "leads_to": ["longformer", "hybrid_architectures"],
+      "properties": {
+        "window_size": "typically 256-512",
+        "complexity": "O(N*W)",
+        "best_for": "local dependencies"
+      },
+      "resources": ["Longformer Paper", "Local Attention Implementation"]
+    },
+    "dilated_attention": {
+      "name": "Dilated Attention",
+      "description": "Attention with exponentially increasing gaps",
+      "difficulty": 4,
+      "category": "sparse_patterns",
+      "prerequisites": ["sparse_attention"],
+      "leads_to": ["sparse_transformer", "hybrid_architectures"],
+      "properties": {
+        "pattern": "exponential dilation",
+        "coverage": "log(N) distance",
+        "use_case": "hierarchical features"
+      },
+      "resources": ["Sparse Transformer Paper"]
+    },
+    "bigbird": {
+      "name": "BigBird",
+      "description": "Combination of local, global, and random attention",
+      "difficulty": 4,
+      "category": "sparse_patterns",
+      "prerequisites": ["local_attention", "global_tokens"],
+      "leads_to": ["longformer", "hybrid_architectures"],
+      "properties": {
+        "components": ["sliding_window", "global_tokens", "random_attention"],
+        "complexity": "O(N)",
+        "quality": "95%+ on many tasks"
+      },
+      "resources": ["BigBird Paper", "BigBird Implementation"]
+    },
+    "longformer": {
+      "name": "Longformer",
+      "description": "Efficient transformer for long documents",
+      "difficulty": 4,
+      "category": "sparse_patterns",
+      "prerequisites": ["local_attention", "global_tokens"],
+      "leads_to": ["production_models"],
+      "properties": {
+        "max_length": "4096-16384",
+        "pattern": "sliding window + global",
+        "applications": "document understanding"
+      },
+      "resources": ["Longformer Paper", "Hugging Face Implementation"]
+    },
+    "state_space_models": {
+      "name": "State Space Models (SSMs)",
+      "description": "Continuous-time models discretized for sequence modeling",
+      "difficulty": 5,
+      "category": "alternative_architectures",
+      "prerequisites": ["calculus", "linear_algebra", "control_theory"],
+      "leads_to": ["s4", "mamba", "mamba2"],
+      "properties": {
+        "formulation": "x'(t) = Ax(t) + Bu(t)",
+        "complexity": "O(N)",
+        "advantage": "long-range modeling"
+      },
+      "resources": ["Annotated S4", "SSM Tutorial"]
+    },
+    "control_theory": {
+      "name": "Control Theory",
+      "description": "Mathematical framework for dynamic systems",
+      "difficulty": 3,
+      "category": "mathematics",
+      "prerequisites": ["calculus", "linear_algebra"],
+      "leads_to": ["state_space_models"],
+      "properties": {
+        "concepts": ["state_space", "transfer_functions", "stability"],
+        "applications": "SSM foundation"
+      },
+      "resources": ["Control Theory Textbook", "State Space Introduction"]
+    },
+    "s4": {
+      "name": "Structured State Space (S4)",
+      "description": "Efficient SSM with HiPPO initialization",
+      "difficulty": 5,
+      "category": "ssm",
+      "prerequisites": ["state_space_models", "hippo_theory"],
+      "leads_to": ["mamba", "diagonal_ssm"],
+      "properties": {
+        "initialization": "HiPPO matrices",
+        "structure": "diagonal plus low-rank",
+        "performance": "SOTA on long sequences"
+      },
+      "resources": ["S4 Paper", "S4 Explained"]
+    },
+    "hippo_theory": {
+      "name": "HiPPO Theory",
+      "description": "High-order Polynomial Projection Operators for memory",
+      "difficulty": 5,
+      "category": "theory",
+      "prerequisites": ["calculus", "linear_algebra"],
+      "leads_to": ["s4"],
+      "properties": {
+        "purpose": "optimal history compression",
+        "basis": "orthogonal polynomials"
+      },
+      "resources": ["HiPPO Paper", "Memory in Transformers"]
+    },
+    "mamba": {
+      "name": "Mamba",
+      "description": "Selective SSM with data-dependent parameters",
+      "difficulty": 5,
+      "category": "ssm",
+      "prerequisites": ["s4", "gating_mechanisms"],
+      "leads_to": ["mamba2", "jamba", "zamba"],
+      "properties": {
+        "innovation": "input-dependent SSM parameters",
+        "complexity": "O(N)",
+        "performance": "matches Transformers"
+      },
+      "resources": ["Mamba Paper", "Mamba Implementation"]
+    },
+    "mamba2": {
+      "name": "Mamba-2",
+      "description": "Simplified SSM with scalar state transitions",
+      "difficulty": 5,
+      "category": "ssm",
+      "prerequisites": ["mamba"],
+      "leads_to": ["hybrid_architectures", "production_models"],
+      "properties": {
+        "improvement": "2-8x faster than Mamba-1",
+        "simplification": "scalar recurrence",
+        "hardware": "tensor core optimized"
+      },
+      "resources": ["Mamba-2 Paper", "Implementation Guide"]
+    },
+    "gating_mechanisms": {
+      "name": "Gating Mechanisms",
+      "description": "Selective information flow control",
+      "difficulty": 3,
+      "category": "components",
+      "prerequisites": ["neural_networks"],
+      "leads_to": ["mamba", "lstm", "gru"],
+      "properties": {
+        "types": ["forget_gate", "input_gate", "output_gate"],
+        "purpose": "selective memory"
+      },
+      "resources": ["LSTM Paper", "Gating Explained"]
+    },
+    "recurrent_networks": {
+      "name": "Recurrent Networks",
+      "description": "Sequential processing with hidden states",
+      "difficulty": 3,
+      "category": "architectures",
+      "prerequisites": ["neural_networks"],
+      "leads_to": ["rwkv", "linear_rnns", "test_time_training"],
+      "properties": {
+        "types": ["vanilla_rnn", "lstm", "gru"],
+        "challenge": "vanishing gradients"
+      },
+      "resources": ["Understanding LSTMs", "RNN Tutorial"]
+    },
+    "linear_rnns": {
+      "name": "Linear RNNs",
+      "description": "RNNs with linear complexity and parallel training",
+      "difficulty": 4,
+      "category": "linear_models",
+      "prerequisites": ["recurrent_networks", "linear_attention"],
+      "leads_to": ["rwkv", "retnet", "hybrid_architectures"],
+      "properties": {
+        "examples": ["RWKV", "RetNet", "HGRN"],
+        "training": "parallelizable",
+        "inference": "O(1) memory"
+      },
+      "resources": ["Linear RNN Survey", "RetNet Paper"]
+    },
+    "mixture_of_experts": {
+      "name": "Mixture of Experts (MoE)",
+      "description": "Conditional computation with specialized subnetworks",
+      "difficulty": 4,
+      "category": "scaling",
+      "prerequisites": ["neural_networks", "probability"],
+      "leads_to": ["routing_mechanisms", "load_balancing", "sparse_moe"],
+      "properties": {
+        "concept": "activate subset of parameters",
+        "scaling": "more capacity, same compute",
+        "challenge": "load balancing"
+      },
+      "resources": ["Switch Transformers", "GLaM Paper"]
+    },
+    "routing_mechanisms": {
+      "name": "Routing Mechanisms",
+      "description": "Selecting which experts process which tokens",
+      "difficulty": 4,
+      "category": "moe",
+      "prerequisites": ["mixture_of_experts"],
+      "leads_to": ["token_choice", "expert_choice", "dynamic_routing"],
+      "properties": {
+        "types": ["top-k", "threshold", "stochastic"],
+        "objective": "balanced expert usage"
+      },
+      "resources": ["Routing in MoE", "Load Balancing Strategies"]
+    },
+    "token_choice": {
+      "name": "Token-Choice Routing",
+      "description": "Each token selects its top-k experts",
+      "difficulty": 4,
+      "category": "moe",
+      "prerequisites": ["routing_mechanisms"],
+      "leads_to": ["switch_transformer", "production_moe"],
+      "properties": {
+        "mechanism": "tokens choose experts",
+        "advantage": "token control",
+        "issue": "load imbalance"
+      },
+      "resources": ["Switch Transformer Paper"]
+    },
+    "expert_choice": {
+      "name": "Expert-Choice Routing",
+      "description": "Each expert selects its top-k tokens",
+      "difficulty": 4,
+      "category": "moe",
+      "prerequisites": ["routing_mechanisms"],
+      "leads_to": ["balanced_moe", "production_moe"],
+      "properties": {
+        "mechanism": "experts choose tokens",
+        "advantage": "perfect balance",
+        "tradeoff": "token dropping"
+      },
+      "resources": ["Expert Choice Paper", "V-MoE"]
+    },
+    "load_balancing": {
+      "name": "Load Balancing in MoE",
+      "description": "Ensuring balanced expert utilization",
+      "difficulty": 4,
+      "category": "moe",
+      "prerequisites": ["mixture_of_experts"],
+      "leads_to": ["auxiliary_loss", "capacity_factor"],
+      "properties": {
+        "methods": ["auxiliary_loss", "capacity_constraints", "random_routing"],
+        "importance": "prevent collapse"
+      },
+      "resources": ["MoE Load Balancing", "Balanced Assignment"]
+    },
+    "switch_transformer": {
+      "name": "Switch Transformer",
+      "description": "Simplified MoE with single expert routing",
+      "difficulty": 4,
+      "category": "moe",
+      "prerequisites": ["token_choice", "load_balancing"],
+      "leads_to": ["production_moe", "mixtral"],
+      "properties": {
+        "innovation": "single expert per token",
+        "scale": "trillion parameters",
+        "efficiency": "constant compute"
+      },
+      "resources": ["Switch Transformer Paper", "Implementation"]
+    },
+    "sparse_moe": {
+      "name": "Sparse MoE",
+      "description": "MoE with sparse expert activation",
+      "difficulty": 5,
+      "category": "moe",
+      "prerequisites": ["mixture_of_experts", "sparse_computation"],
+      "leads_to": ["mixtral", "production_models"],
+      "properties": {
+        "activation": "2-4 experts typical",
+        "models": ["Mixtral", "Arctic", "DBRX"]
+      },
+      "resources": ["Mixtral Paper", "Sparse MoE Guide"]
+    },
+    "mixtral": {
+      "name": "Mixtral",
+      "description": "Production sparse MoE model from Mistral",
+      "difficulty": 5,
+      "category": "production_models",
+      "prerequisites": ["sparse_moe", "production_optimization"],
+      "leads_to": ["deployment_strategies"],
+      "properties": {
+        "architecture": "8 experts, top-2",
+        "performance": "GPT-3.5 quality",
+        "efficiency": "6x faster inference"
+      },
+      "resources": ["Mixtral Paper", "Mistral Blog"]
+    },
+    "hybrid_architectures": {
+      "name": "Hybrid Architectures",
+      "description": "Combining different architectural components",
+      "difficulty": 5,
+      "category": "advanced",
+      "prerequisites": ["attention_mechanism", "state_space_models"],
+      "leads_to": ["jamba", "zamba", "striped_hyena"],
+      "properties": {
+        "principle": "best of both worlds",
+        "examples": ["Mamba+Attention", "SSM+MoE"],
+        "design": "layer interleaving"
+      },
+      "resources": ["Hybrid Architecture Survey", "Jamba Paper"]
+    },
+    "jamba": {
+      "name": "Jamba",
+      "description": "Mamba + Attention + MoE hybrid",
+      "difficulty": 5,
+      "category": "hybrid_models",
+      "prerequisites": ["mamba", "attention_mechanism", "mixture_of_experts"],
+      "leads_to": ["production_models"],
+      "properties": {
+        "architecture": "6:1 Mamba:Attention ratio",
+        "innovation": "three-way hybrid",
+        "context": "256K tokens"
+      },
+      "resources": ["Jamba Paper", "AI21 Blog"]
+    },
+    "zamba": {
+      "name": "Zamba",
+      "description": "Mamba backbone with shared attention layers",
+      "difficulty": 5,
+      "category": "hybrid_models",
+      "prerequisites": ["mamba", "attention_mechanism"],
+      "leads_to": ["production_models"],
+      "properties": {
+        "size": "7B parameters",
+        "design": "Mamba blocks + periodic attention",
+        "efficiency": "2x faster than Llama"
+      },
+      "resources": ["Zamba Paper", "Zephyr AI Blog"]
+    },
+    "quantization": {
+      "name": "Quantization",
+      "description": "Reducing numerical precision for efficiency",
+      "difficulty": 3,
+      "category": "optimization",
+      "prerequisites": ["neural_networks"],
+      "leads_to": ["int8_quantization", "int4_quantization", "fp8_quantization"],
+      "properties": {
+        "types": ["post-training", "quantization-aware"],
+        "tradeoff": "size/speed vs quality"
+      },
+      "resources": ["Quantization Survey", "BitsAndBytes"]
+    },
+    "int8_quantization": {
+      "name": "INT8 Quantization",
+      "description": "8-bit integer quantization",
+      "difficulty": 3,
+      "category": "quantization",
+      "prerequisites": ["quantization"],
+      "leads_to": ["production_optimization"],
+      "properties": {
+        "reduction": "4x model size",
+        "speedup": "2x typical",
+        "quality": "1-2% degradation"
+      },
+      "resources": ["LLM.int8() Paper", "Quantization Guide"]
+    },
+    "int4_quantization": {
+      "name": "INT4 Quantization",
+      "description": "4-bit integer quantization",
+      "difficulty": 4,
+      "category": "quantization",
+      "prerequisites": ["quantization"],
+      "leads_to": ["gptq", "awq"],
+      "properties": {
+        "reduction": "8x model size",
+        "quality": "3-5% degradation",
+        "techniques": ["GPTQ", "AWQ", "QuIP"]
+      },
+      "resources": ["GPTQ Paper", "AWQ Paper"]
+    },
+    "fp8_quantization": {
+      "name": "FP8 Quantization",
+      "description": "8-bit floating point quantization",
+      "difficulty": 4,
+      "category": "quantization",
+      "prerequisites": ["quantization"],
+      "leads_to": ["flash_attention_3", "production_optimization"],
+      "properties": {
+        "advantage": "better range than INT8",
+        "hardware": "H100 native support",
+        "quality": "<1% degradation"
+      },
+      "resources": ["FP8 Training Paper", "NVIDIA FP8 Guide"]
+    },
+    "gptq": {
+      "name": "GPTQ",
+      "description": "Gradient-based post-training quantization",
+      "difficulty": 4,
+      "category": "quantization",
+      "prerequisites": ["int4_quantization"],
+      "leads_to": ["production_models"],
+      "properties": {
+        "method": "layer-wise optimization",
+        "quality": "best 4-bit quality",
+        "speed": "fast inference"
+      },
+      "resources": ["GPTQ Paper", "AutoGPTQ Library"]
+    },
+    "awq": {
+      "name": "AWQ",
+      "description": "Activation-aware weight quantization",
+      "difficulty": 4,
+      "category": "quantization",
+      "prerequisites": ["int4_quantization"],
+      "leads_to": ["production_models"],
+      "properties": {
+        "innovation": "protect salient weights",
+        "quality": "better than GPTQ",
+        "hardware": "optimized kernels"
+      },
+      "resources": ["AWQ Paper", "AWQ Implementation"]
+    },
+    "kv_cache_optimization": {
+      "name": "KV Cache Optimization",
+      "description": "Techniques to reduce KV cache memory",
+      "difficulty": 4,
+      "category": "memory_optimization",
+      "prerequisites": ["kv_cache"],
+      "leads_to": ["paged_attention", "h2o", "streaming_llm"],
+      "properties": {
+        "methods": ["compression", "eviction", "sharing"],
+        "impact": "2-10x memory reduction"
+      },
+      "resources": ["KV Cache Survey", "Memory Optimization Guide"]
+    },
+    "paged_attention": {
+      "name": "PagedAttention",
+      "description": "Virtual memory management for KV cache",
+      "difficulty": 4,
+      "category": "memory_optimization",
+      "prerequisites": ["kv_cache_optimization"],
+      "leads_to": ["vllm", "production_serving"],
+      "properties": {
+        "concept": "virtual memory for KV cache",
+        "benefit": "near-zero waste",
+        "implementation": "vLLM"
+      },
+      "resources": ["PagedAttention Paper", "vLLM Documentation"]
+    },
+    "h2o": {
+      "name": "Heavy-Hitter Oracle (H2O)",
+      "description": "Keeping only important tokens in KV cache",
+      "difficulty": 4,
+      "category": "memory_optimization",
+      "prerequisites": ["kv_cache_optimization", "attention_scores"],
+      "leads_to": ["streaming_llm"],
+      "properties": {
+        "strategy": "keep high-attention tokens",
+        "reduction": "retain 20% tokens",
+        "quality": "minimal degradation"
+      },
+      "resources": ["H2O Paper", "Implementation"]
+    },
+    "streaming_llm": {
+      "name": "StreamingLLM",
+      "description": "Infinite context with attention sinks",
+      "difficulty": 5,
+      "category": "memory_optimization",
+      "prerequisites": ["h2o", "attention_sinks"],
+      "leads_to": ["production_serving"],
+      "properties": {
+        "technique": "keep initial tokens + window",
+        "context": "infinite theoretical",
+        "memory": "constant"
+      },
+      "resources": ["StreamingLLM Paper", "Attention Sinks"]
+    },
+    "attention_sinks": {
+      "name": "Attention Sinks",
+      "description": "Initial tokens that absorb attention mass",
+      "difficulty": 4,
+      "category": "phenomena",
+      "prerequisites": ["attention_mechanism"],
+      "leads_to": ["streaming_llm"],
+      "properties": {
+        "observation": "first tokens get high attention",
+        "usage": "anchor for streaming"
+      },
+      "resources": ["Attention Sink Paper", "Analysis"]
+    },
+    "grouped_query_attention": {
+      "name": "Grouped Query Attention (GQA)",
+      "description": "Sharing KV heads across query groups",
+      "difficulty": 3,
+      "category": "efficient_attention",
+      "prerequisites": ["multi_head_attention"],
+      "leads_to": ["multi_query_attention", "production_models"],
+      "properties": {
+        "groups": "2-8 typical",
+        "memory": "proportional reduction",
+        "quality": "minimal impact"
+      },
+      "resources": ["GQA Paper", "Llama 2 Paper"]
+    },
+    "multi_query_attention": {
+      "name": "Multi-Query Attention (MQA)",
+      "description": "Single KV head shared across all queries",
+      "difficulty": 3,
+      "category": "efficient_attention",
+      "prerequisites": ["grouped_query_attention"],
+      "leads_to": ["production_models"],
+      "properties": {
+        "memory": "H-fold reduction",
+        "speed": "faster decoding",
+        "quality": "slight degradation"
+      },
+      "resources": ["MQA Paper", "Implementation Guide"]
+    },
+    "model_routing": {
+      "name": "Model Routing",
+      "description": "Directing queries to appropriate models",
+      "difficulty": 3,
+      "category": "orchestration",
+      "prerequisites": ["neural_networks", "classification"],
+      "leads_to": ["cascade_inference", "specialist_routing"],
+      "properties": {
+        "strategies": ["complexity-based", "domain-based", "confidence-based"],
+        "overhead": "<10ms typical"
+      },
+      "resources": ["FrugalGPT Paper", "Routing Strategies"]
+    },
+    "cascade_inference": {
+      "name": "Cascade Inference",
+      "description": "Progressive model invocation based on confidence",
+      "difficulty": 4,
+      "category": "orchestration",
+      "prerequisites": ["model_routing", "confidence_estimation"],
+      "leads_to": ["production_serving"],
+      "properties": {
+        "flow": "small → medium → large",
+        "early_exit": "confidence threshold",
+        "savings": "80% on simple queries"
+      },
+      "resources": ["Cascade Papers", "Implementation"]
+    },
+    "specialist_routing": {
+      "name": "Specialist Model Routing",
+      "description": "Domain-specific model selection",
+      "difficulty": 4,
+      "category": "orchestration",
+      "prerequisites": ["model_routing", "domain_classification"],
+      "leads_to": ["production_serving"],
+      "properties": {
+        "models": ["code", "math", "creative", "factual"],
+        "selection": "classifier-based",
+        "quality": "better than generalist"
+      },
+      "resources": ["Specialist Models", "Routing Logic"]
+    },
+    "knowledge_distillation": {
+      "name": "Knowledge Distillation",
+      "description": "Training smaller models from larger teachers",
+      "difficulty": 4,
+      "category": "training",
+      "prerequisites": ["neural_networks", "training_objectives"],
+      "leads_to": ["progressive_distillation", "task_specific_distillation"],
+      "properties": {
+        "teacher": "large model",
+        "student": "small model",
+        "objective": "match distributions"
+      },
+      "resources": ["Distillation Paper", "DistilBERT"]
+    },
+    "progressive_distillation": {
+      "name": "Progressive Distillation",
+      "description": "Multi-stage size reduction",
+      "difficulty": 5,
+      "category": "training",
+      "prerequisites": ["knowledge_distillation"],
+      "leads_to": ["tiny_models"],
+      "properties": {
+        "stages": "7B → 3B → 1B",
+        "retention": "85-95% per stage",
+        "final": "10x smaller"
+      },
+      "resources": ["Progressive Distillation", "MiniLLM"]
+    },
+    "task_specific_distillation": {
+      "name": "Task-Specific Distillation",
+      "description": "Distilling for specific capabilities",
+      "difficulty": 4,
+      "category": "training",
+      "prerequisites": ["knowledge_distillation", "fine_tuning"],
+      "leads_to": ["specialist_models"],
+      "properties": {
+        "focus": "single task excellence",
+        "size": "100x smaller possible",
+        "quality": "match teacher on task"
+      },
+      "resources": ["Task Distillation", "Specialized Models"]
+    },
+    "speculative_decoding": {
+      "name": "Speculative Decoding",
+      "description": "Using small models to predict large model outputs",
+      "difficulty": 5,
+      "category": "inference_optimization",
+      "prerequisites": ["model_routing", "autoregressive_generation"],
+      "leads_to": ["production_serving"],
+      "properties": {
+        "draft_model": "small, fast",
+        "verify_model": "large, accurate",
+        "speedup": "2-3x typical"
+      },
+      "resources": ["Speculative Decoding Paper", "Implementation"]
+    },
+    "continuous_batching": {
+      "name": "Continuous Batching",
+      "description": "Dynamic batch management during inference",
+      "difficulty": 4,
+      "category": "serving",
+      "prerequisites": ["batching", "memory_management"],
+      "leads_to": ["vllm", "production_serving"],
+      "properties": {
+        "vs_static": "2-10x throughput",
+        "technique": "iteration-level scheduling",
+        "complexity": "memory management"
+      },
+      "resources": ["Orca Paper", "vLLM Implementation"]
+    },
+    "vllm": {
+      "name": "vLLM",
+      "description": "High-throughput LLM serving framework",
+      "difficulty": 4,
+      "category": "frameworks",
+      "prerequisites": ["paged_attention", "continuous_batching"],
+      "leads_to": ["production_serving"],
+      "properties": {
+        "features": ["PagedAttention", "continuous batching", "optimized kernels"],
+        "throughput": "24x vs naive"
+      },
+      "resources": ["vLLM Paper", "vLLM GitHub"]
+    },
+    "semantic_caching": {
+      "name": "Semantic Caching",
+      "description": "Caching based on semantic similarity",
+      "difficulty": 3,
+      "category": "serving",
+      "prerequisites": ["embeddings", "similarity_search"],
+      "leads_to": ["production_serving"],
+      "properties": {
+        "method": "embedding similarity",
+        "hit_rate": "20-40% typical",
+        "speedup": "instant for hits"
+      },
+      "resources": ["Semantic Cache Paper", "GPTCache"]
+    },
+    "triton_kernels": {
+      "name": "Triton Kernels",
+      "description": "Custom GPU kernels in Python",
+      "difficulty": 5,
+      "category": "hardware_optimization",
+      "prerequisites": ["cuda_programming", "gpu_architecture"],
+      "leads_to": ["kernel_fusion", "production_optimization"],
+      "properties": {
+        "language": "Python-like",
+        "performance": "near-CUDA",
+        "productivity": "10x faster development"
+      },
+      "resources": ["Triton Tutorial", "OpenAI Triton"]
+    },
+    "kernel_fusion": {
+      "name": "Kernel Fusion",
+      "description": "Combining multiple operations into single kernel",
+      "difficulty": 5,
+      "category": "hardware_optimization",
+      "prerequisites": ["triton_kernels", "gpu_architecture"],
+      "leads_to": ["flash_attention", "production_optimization"],
+      "properties": {
+        "benefit": "reduce memory transfers",
+        "examples": ["fused attention", "fused LayerNorm"],
+        "speedup": "2-5x typical"
+      },
+      "resources": ["Kernel Fusion Guide", "Apex Documentation"]
+    },
+    "tensor_parallelism": {
+      "name": "Tensor Parallelism",
+      "description": "Splitting model tensors across devices",
+      "difficulty": 5,
+      "category": "distributed",
+      "prerequisites": ["distributed_computing", "model_parallelism"],
+      "leads_to": ["production_scaling"],
+      "properties": {
+        "split": "within layers",
+        "communication": "all-reduce",
+        "scaling": "2-8 GPUs typical"
+      },
+      "resources": ["Megatron-LM Paper", "Parallelism Guide"]
+    },
+    "pipeline_parallelism": {
+      "name": "Pipeline Parallelism",
+      "description": "Splitting model layers across devices",
+      "difficulty": 5,
+      "category": "distributed",
+      "prerequisites": ["distributed_computing", "model_parallelism"],
+      "leads_to": ["production_scaling"],
+      "properties": {
+        "split": "across layers",
+        "challenge": "bubble overhead",
+        "techniques": ["GPipe", "PipeDream"]
+      },
+      "resources": ["GPipe Paper", "PipeDream Paper"]
+    },
+    "memory_bandwidth": {
+      "name": "Memory Bandwidth Optimization",
+      "description": "Optimizing data movement between memory hierarchies",
+      "difficulty": 4,
+      "category": "hardware",
+      "prerequisites": ["bottleneck_analysis", "gpu_architecture"],
+      "leads_to": ["flash_attention", "io_optimization"],
+      "properties": {
+        "hierarchy": ["SRAM", "HBM", "DRAM"],
+        "bottleneck": "often memory-bound",
+        "optimization": "minimize transfers"
+      },
+      "resources": ["Roofline Model", "Memory Optimization"]
+    },
+    "io_optimization": {
+      "name": "IO Optimization",
+      "description": "Reducing input/output overhead",
+      "difficulty": 4,
+      "category": "optimization",
+      "prerequisites": ["memory_bandwidth", "profiling"],
+      "leads_to": ["flash_attention", "kernel_fusion"],
+      "properties": {
+        "techniques": ["prefetching", "async_transfer", "memory_pooling"],
+        "impact": "2-10x speedup"
+      },
+      "resources": ["IO Optimization Guide", "CUDA Best Practices"]
+    },
+    "production_optimization": {
+      "name": "Production Optimization",
+      "description": "End-to-end optimization for deployment",
+      "difficulty": 5,
+      "category": "deployment",
+      "prerequisites": ["quantization", "kernel_fusion", "serving_infrastructure"],
+      "leads_to": ["production_serving"],
+      "properties": {
+        "targets": ["latency", "throughput", "cost"],
+        "p99": "<100ms",
+        "techniques": "combination of all"
+      },
+      "resources": ["Production Guide", "Deployment Best Practices"]
+    },
+    "production_serving": {
+      "name": "Production Serving",
+      "description": "Scalable, reliable LLM deployment",
+      "difficulty": 5,
+      "category": "deployment",
+      "prerequisites": ["production_optimization", "monitoring"],
+      "leads_to": ["edge_deployment", "cost_optimization"],
+      "properties": {
+        "requirements": ["SLA", "monitoring", "failover"],
+        "frameworks": ["vLLM", "TGI", "Triton"]
+      },
+      "resources": ["Serving at Scale", "Production Checklist"]
+    },
+    "edge_deployment": {
+      "name": "Edge Deployment",
+      "description": "Running models on edge devices",
+      "difficulty": 5,
+      "category": "deployment",
+      "prerequisites": ["quantization", "model_compression", "tiny_models"],
+      "leads_to": ["mobile_inference", "embedded_systems"],
+      "properties": {
+        "constraints": ["memory", "power", "latency"],
+        "models": ["Phi", "Gemma", "TinyLlama"],
+        "frameworks": ["ONNX", "TensorRT", "Core ML"]
+      },
+      "resources": ["Edge AI Guide", "Mobile Deployment"]
+    },
+    "monitoring": {
+      "name": "Performance Monitoring",
+      "description": "Tracking model performance in production",
+      "difficulty": 3,
+      "category": "operations",
+      "prerequisites": ["profiling", "metrics"],
+      "leads_to": ["production_serving", "cost_optimization"],
+      "properties": {
+        "metrics": ["latency", "throughput", "error_rate", "cost"],
+        "tools": ["Prometheus", "Grafana", "DataDog"]
+      },
+      "resources": ["Monitoring Guide", "Observability"]
+    },
+    "cost_optimization": {
+      "name": "Cost Optimization",
+      "description": "Minimizing inference costs",
+      "difficulty": 4,
+      "category": "operations",
+      "prerequisites": ["production_serving", "monitoring"],
+      "leads_to": ["business_metrics"],
+      "properties": {
+        "targets": ["$/request", "$/token"],
+        "strategies": ["spot_instances", "batching", "caching"],
+        "tradeoffs": "cost vs latency"
+      },
+      "resources": ["Cost Guide", "Economics of LLMs"]
+    }
+  },
+  "relationships": {
+    "combines_with": {
+      "linear_algebra + calculus": ["optimization", "backpropagation"],
+      "linear_algebra + probability": ["neural_networks"],
+      "attention_mechanism + kernel_methods": ["linear_attention"],
+      "attention_mechanism + sparsity": ["sparse_attention"],
+      "standard_attention + memory_bandwidth": ["flash_attention"],
+      "standard_attention + sparsity": ["local_attention", "dilated_attention"],
+      "local_attention + global_tokens": ["longformer", "bigbird"],
+      "state_space_models + gating_mechanisms": ["mamba"],
+      "mamba + attention_mechanism": ["jamba", "zamba"],
+      "mamba + mixture_of_experts": ["jamba"],
+      "linear_attention + recurrent_networks": ["rwkv", "retnet"],
+      "routing_mechanisms + small_models": ["cascade_inference"],
+      "knowledge_distillation + task_specific": ["specialist_models"],
+      "quantization + kernel_fusion": ["production_optimization"],
+      "paged_attention + continuous_batching": ["vllm"],
+      "flash_attention + quantization": ["flash_attention_3"]
+    },
+    "prerequisite_chains": {
+      "beginner": ["linear_algebra", "calculus", "probability"],
+      "intermediate": ["neural_networks", "attention_mechanism", "profiling"],
+      "advanced": ["state_space_models", "mixture_of_experts", "hybrid_architectures"],
+      "expert": ["production_optimization", "edge_deployment", "research_frontiers"]
+    }
+  },
+  "categories": {
+    "mathematics": "Foundational mathematical concepts",
+    "deep_learning": "Core neural network concepts",
+    "transformer": "Transformer architecture components",
+    "attention": "Attention mechanism variations",
+    "efficient_attention": "Optimized attention implementations",
+    "linear_models": "Linear complexity models",
+    "ssm": "State space model variants",
+    "moe": "Mixture of experts components",
+    "hybrid_models": "Combined architectures",
+    "optimization": "Performance optimizations",
+    "quantization": "Numerical precision reduction",
+    "memory_optimization": "Memory usage reduction",
+    "orchestration": "Model coordination strategies",
+    "training": "Training techniques",
+    "serving": "Production serving strategies",
+    "deployment": "Deployment configurations",
+    "hardware": "Hardware-specific optimizations",
+    "distributed": "Multi-device strategies",
+    "frameworks": "Implementation frameworks",
+    "production_models": "Production-ready models"
+  },
+  "difficulty_levels": {
+    "1": ["linear_algebra", "calculus", "probability"],
+    "2": ["neural_networks", "profiling"],
+    "3": ["attention_mechanism", "quantization", "model_routing"],
+    "4": ["linear_attention", "sparse_attention", "mixture_of_experts"],
+    "5": ["state_space_models", "hybrid_architectures", "production_optimization"]
+  },
+  "learning_paths": {
+    "efficiency_basics": {
+      "description": "Understanding efficiency fundamentals",
+      "path": ["profiling", "bottleneck_analysis", "attention_mechanism", "standard_attention", "flash_attention"]
+    },
+    "linear_models": {
+      "description": "Linear complexity architectures",
+      "path": ["linear_attention", "performers", "rwkv", "state_space_models", "mamba"]
+    },
+    "sparse_methods": {
+      "description": "Sparse attention patterns",
+      "path": ["sparse_attention", "local_attention", "dilated_attention", "bigbird", "longformer"]
+    },
+    "scaling_techniques": {
+      "description": "Scaling with MoE",
+      "path": ["mixture_of_experts", "routing_mechanisms", "load_balancing", "switch_transformer", "mixtral"]
+    },
+    "production_path": {
+      "description": "Path to production deployment",
+      "path": ["quantization", "kv_cache_optimization", "continuous_batching", "vllm", "production_serving"]
+    }
+  }
+}

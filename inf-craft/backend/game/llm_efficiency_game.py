@@ -36,7 +36,7 @@ class GameState:
     session_time: float
 
 class LLMEfficiencyGame:
-    def __init__(self, concepts_file: str = "../data/llm_efficiency_concepts.json"):
+    def __init__(self, concepts_file: str = "../../data/llm_efficiency_concepts_complete.json"):
         """Initialize the game with concept database"""
         self.concepts_file = concepts_file
         self.concepts = {}
