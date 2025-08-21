@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { 
   Brain, Cpu, Zap, Search, BookOpen, Trophy, 
   Volume2, VolumeX, Star, RefreshCw, Save, 
-  Upload, HelpCircle, TrendingUp, Layers, GitBranch
+  Upload, HelpCircle, TrendingUp, Layers, GitBranch,
+  FileText, X
 } from 'lucide-react';
 
 // Type definitions
@@ -61,6 +64,9 @@ const LLMEfficiencyGame: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<'discovered' | 'workspace' | 'stats'>('discovered');
   const [showHint, setShowHint] = useState(false);
   const [hint, setHint] = useState<string>('');
+  const [showDocs, setShowDocs] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState<string>('');
+  const [docContent, setDocContent] = useState<string>('');
   const workspaceRef = useRef<HTMLDivElement>(null);
 
   const rarityColors = {
@@ -79,6 +85,28 @@ const LLMEfficiencyGame: React.FC = () => {
     hardware: <Cpu className="w-4 h-4" />,
     distributed: <GitBranch className="w-4 h-4" />,
     production: <Layers className="w-4 h-4" />
+  };
+
+  const docFiles = [
+    { name: 'Speed Wins', file: 'speed-wins.md', description: 'Optimization strategies for LLM efficiency' },
+    { name: 'Modular Optimization Roadmap', file: 'modular_optimization_roadmap.md', description: 'Comprehensive roadmap for modular optimization' },
+    { name: 'Game-Based Learning Guide', file: 'game_based_learning_guide.md', description: 'Guide for learning through gamification' }
+  ];
+
+  const openDocumentation = async (filename: string) => {
+    try {
+      const response = await fetch(`${API_BASE}/docs/${filename}`);
+      if (response.ok) {
+        const content = await response.text();
+        setDocContent(content);
+        setSelectedDoc(filename);
+        setShowDocs(true);
+      } else {
+        console.error('Failed to load documentation');
+      }
+    } catch (error) {
+      console.error('Error loading documentation:', error);
+    }
   };
 
   // Initialize game session
@@ -496,6 +524,13 @@ const LLMEfficiencyGame: React.FC = () => {
           </div>
           <div className="flex gap-2">
             <button
+              onClick={() => setShowDocs(true)}
+              className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 text-white"
+            >
+              <FileText className="w-4 h-4" />
+              Docs
+            </button>
+            <button
               onClick={() => setWorkspaceElements([])}
               className="px-3 py-1 bg-slate-600 hover:bg-slate-500 rounded text-sm transition-colors text-white"
             >
@@ -670,6 +705,100 @@ const LLMEfficiencyGame: React.FC = () => {
           )}
         </div>
       </div>
+
+              {/* Documentation Modal */}
+        {showDocs && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-slate-800 rounded-lg w-full h-full max-w-6xl max-h-[90vh] flex flex-col border border-slate-600">
+              {/* Modal Header */}
+              <div className="p-4 border-b border-slate-700 flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-indigo-400" />
+                  Documentation
+                </h3>
+                <button
+                  onClick={() => setShowDocs(false)}
+                  className="p-1 hover:bg-slate-700 rounded transition-colors"
+                  aria-label="Close documentation"
+                >
+                  <X className="w-5 h-5 text-slate-400" />
+                </button>
+              </div>
+
+              {/* Modal Content */}
+              <div className="flex-1 flex min-h-0">
+                {/* Sidebar with doc list */}
+                <div className="w-64 border-r border-slate-700 p-4 overflow-y-auto">
+                  <h4 className="text-sm font-semibold text-slate-300 mb-3">Available Documents</h4>
+                  <div className="space-y-2">
+                    {docFiles.map((doc) => (
+                      <button
+                        key={doc.file}
+                        onClick={() => openDocumentation(doc.file)}
+                        className={`w-full text-left p-3 rounded-lg transition-colors ${
+                          selectedDoc === doc.file 
+                            ? 'bg-indigo-600 text-white' 
+                            : 'bg-slate-700 hover:bg-slate-600 text-slate-200'
+                        }`}
+                      >
+                        <div className="font-medium text-sm">{doc.name}</div>
+                        <div className="text-xs opacity-75 mt-1">{doc.description}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Document content */}
+                <div className="flex-1 p-6 overflow-y-auto">
+                  {docContent ? (
+                                         <div className="prose prose-invert prose-slate max-w-none text-slate-200">
+                       <ReactMarkdown 
+                         remarkPlugins={[remarkGfm]}
+                         components={{
+                          h1: ({children}) => <h1 className="text-3xl font-bold text-slate-100 mb-4 border-b border-slate-600 pb-2">{children}</h1>,
+                          h2: ({children}) => <h2 className="text-2xl font-bold text-slate-100 mb-3 mt-6">{children}</h2>,
+                          h3: ({children}) => <h3 className="text-xl font-semibold text-slate-100 mb-2 mt-4">{children}</h3>,
+                          h4: ({children}) => <h4 className="text-lg font-semibold text-slate-100 mb-2 mt-3">{children}</h4>,
+                          p: ({children}) => <p className="text-slate-200 mb-3 leading-relaxed">{children}</p>,
+                          ul: ({children}) => <ul className="list-disc list-inside text-slate-200 mb-3 space-y-1">{children}</ul>,
+                          ol: ({children}) => <ol className="list-decimal list-inside text-slate-200 mb-3 space-y-1">{children}</ol>,
+                          li: ({children}) => <li className="text-slate-200">{children}</li>,
+                          code: ({children, className}) => {
+                            const isInline = !className;
+                            if (isInline) {
+                              return <code className="bg-slate-700 text-emerald-300 px-1 py-0.5 rounded text-sm">{children}</code>;
+                            }
+                            return (
+                              <pre className="bg-slate-900 text-slate-200 p-4 rounded-lg overflow-x-auto mb-4">
+                                <code className="text-sm">{children}</code>
+                              </pre>
+                            );
+                          },
+                          blockquote: ({children}) => <blockquote className="border-l-4 border-indigo-500 pl-4 italic text-slate-300 mb-3">{children}</blockquote>,
+                          strong: ({children}) => <strong className="font-bold text-slate-100">{children}</strong>,
+                          em: ({children}) => <em className="italic text-slate-300">{children}</em>,
+                          a: ({children, href}) => <a href={href} className="text-indigo-400 hover:text-indigo-300 underline">{children}</a>,
+                          table: ({children}) => <div className="overflow-x-auto mb-4"><table className="min-w-full border border-slate-600">{children}</table></div>,
+                          th: ({children}) => <th className="border border-slate-600 px-3 py-2 text-left bg-slate-700 text-slate-100">{children}</th>,
+                          td: ({children}) => <td className="border border-slate-600 px-3 py-2 text-slate-200">{children}</td>,
+                        }}
+                      >
+                        {docContent}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-slate-400">
+                      <div className="text-center">
+                        <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                        <p>Select a document to view its content</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 };

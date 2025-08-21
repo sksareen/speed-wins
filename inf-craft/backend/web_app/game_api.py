@@ -4,7 +4,7 @@ Flask API for LLM Efficiency InfiniteCraft Game
 Provides REST endpoints for the React frontend
 """
 
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session, send_from_directory
 from flask_cors import CORS
 import json
 import os
@@ -516,6 +516,29 @@ def get_hint():
         'hint': 'Keep exploring! Try combining concepts from different categories.',
         'tip': 'Mathematical foundations often combine with architectures to create new techniques.'
     })
+
+@app.route('/api/docs/<filename>')
+def get_documentation(filename):
+    """Serve markdown documentation files"""
+    # Define the path to the documentation files
+    docs_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), 'research', 'llm-efficiency')
+    
+    # Validate filename to prevent directory traversal
+    allowed_files = ['speed-wins.md', 'modular_optimization_roadmap.md', 'game_based_learning_guide.md']
+    if filename not in allowed_files:
+        return jsonify({'error': 'File not found'}), 404
+    
+    file_path = os.path.join(docs_path, filename)
+    
+    if not os.path.exists(file_path):
+        return jsonify({'error': 'File not found'}), 404
+    
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return content, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    except Exception as e:
+        return jsonify({'error': f'Error reading file: {str(e)}'}), 500
 
 @app.route('/health')
 def health_check():
