@@ -37,3 +37,4 @@ Thumbs.db
 # Env files
 backend/**/.env
 src/**/.env
+.vercel

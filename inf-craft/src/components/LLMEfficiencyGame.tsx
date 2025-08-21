@@ -3,8 +3,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { 
   Brain, Cpu, Zap, Search, BookOpen, Trophy, 
-  Volume2, VolumeX, Star, RefreshCw, Save, 
-  Upload, HelpCircle, TrendingUp, Layers, GitBranch,
+  Volume2, VolumeX, RefreshCw, 
+  HelpCircle, TrendingUp, Layers, GitBranch,
   FileText, X
 } from 'lucide-react';
 
@@ -60,8 +60,7 @@ const LLMEfficiencyGame: React.FC = () => {
   const [gameStats, setGameStats] = useState<GameStats | null>(null);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState<'discovered' | 'workspace' | 'stats'>('discovered');
+  // const [selectedTab] = useState<'discovered' | 'workspace' | 'stats'>('discovered');
   const [showHint, setShowHint] = useState(false);
   const [hint, setHint] = useState<string>('');
   const [showDocs, setShowDocs] = useState(false);
@@ -167,12 +166,12 @@ const LLMEfficiencyGame: React.FC = () => {
   const initializeGame = async () => {
     try {
       // Create new session
-      const sessionRes = await fetch(`${API_BASE}/session`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-      const sessionData = await sessionRes.json();
-      setSessionId(sessionData.session_id);
+      // const sessionRes = await fetch(`${API_BASE}/session`, {
+      //   method: 'POST',
+      //   credentials: 'include'
+      // });
+      // const sessionData = await sessionRes.json();
+      // setSessionId(sessionData.session_id);
 
       // Load game state
       await loadGameState();
@@ -309,15 +308,8 @@ const LLMEfficiencyGame: React.FC = () => {
 
         setCombineMessage(`🎉 Discovered: ${result.newElement.name}!`);
         
-        // Update stats
-        if (result.score !== undefined) {
-          setGameStats(prev => prev ? {
-            ...prev,
-            score: result.score!,
-            level: result.level!,
-            discovered_concepts: prev.discovered_concepts + 1
-          } : null);
-        }
+        // Refresh complete stats from backend to ensure accuracy
+        await loadGameState();
 
         // Remove the two elements that were combined and add the new one
         const combinationX = workspaceEl1 && workspaceEl2 ? 
