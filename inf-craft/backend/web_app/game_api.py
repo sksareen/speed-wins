@@ -524,7 +524,15 @@ def get_documentation(filename):
     docs_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), 'research', 'llm-efficiency')
     
     # Validate filename to prevent directory traversal
-    allowed_files = ['speed-wins.md', 'modular_optimization_roadmap.md', 'game_based_learning_guide.md']
+    allowed_files = [
+        'speed-wins.md', 
+        'modular_optimization_roadmap.md', 
+        'game_based_learning_guide.md',
+        'resonance.md',
+        'models.md',
+        'paper.md',
+        'dimensions.md'
+    ]
     if filename not in allowed_files:
         return jsonify({'error': 'File not found'}), 404
     

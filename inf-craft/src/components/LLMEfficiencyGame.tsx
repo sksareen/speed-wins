@@ -90,7 +90,11 @@ const LLMEfficiencyGame: React.FC = () => {
   const docFiles = [
     { name: 'Speed Wins', file: 'speed-wins.md', description: 'Optimization strategies for LLM efficiency' },
     { name: 'Modular Optimization Roadmap', file: 'modular_optimization_roadmap.md', description: 'Comprehensive roadmap for modular optimization' },
-    { name: 'Game-Based Learning Guide', file: 'game_based_learning_guide.md', description: 'Guide for learning through gamification' }
+    { name: 'Game-Based Learning Guide', file: 'game_based_learning_guide.md', description: 'Guide for learning through gamification' },
+    { name: 'Resonance', file: 'resonance.md', description: 'Consciousness as atmospheric tuning' },
+    { name: 'Models', file: 'models.md', description: 'Intelligence scaffolding and modular AI' },
+    { name: 'Paper', file: 'paper.md', description: 'Speed: consciousness as computational tuning' },
+    { name: 'Dimensions', file: 'dimensions.md', description: '3D as a fold of 2D' }
   ];
 
   const openDocumentation = async (filename: string) => {
