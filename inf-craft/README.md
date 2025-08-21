@@ -9,166 +9,173 @@ This project combines gamified learning with practical implementation to master 
 ## 📁 Directory Structure
 
 ```
-infinite-craft-project/
-├── src/                    # React application source code
+inf-craft/
+├── src/                           # React frontend
 │   ├── components/
-│   │   └── AiInfiniteCraft.tsx  # Main game component (35KB)
+│   │   ├── LLMEfficiencyGame.tsx  # Main efficiency game
+│   │   └── AiInfiniteCraft.tsx    # Original game (legacy)
 │   ├── App.tsx
 │   ├── main.tsx
 │   └── index.css
-├── backend/                # Python backend applications
-│   ├── web_app/           # Flask web application
-│   ├── game/              # CLI game implementation
-│   ├── run_web_app.py     # Web app runner
-│   └── run_game.py        # Game runner
-├── research/              # Research papers and analysis
-├── docs/                  # Documentation and guides
-├── data/                  # Concept definitions and data
-├── scripts/               # Setup and utility scripts
-├── logs/                  # Application logs
-├── package.json           # Node.js dependencies
-├── tsconfig.json          # TypeScript configuration
-├── vite.config.ts         # Vite build configuration
-├── tailwind.config.js     # Tailwind CSS configuration
-├── index.html             # Main HTML file
-├── README_AI_INFINITE_CRAFT.md
-├── INFINITE_CRAFT_BEHAVIOR.md
-├── API_SETUP.md
-├── FIXES_APPLIED.md
-└── SETUP_COMPLETE.md
+├── backend/                       # Python backend
+│   ├── game/                      # Core game logic
+│   │   └── llm_efficiency_game.py
+│   ├── web_app/                   # Flask API
+│   │   ├── game_api.py
+│   │   └── requirements.txt
+│   └── run_game.py                # Unified runner
+├── data/                          # Game content
+│   └── llm_efficiency_concepts_complete.json
+├── research/                      # Learning resources
+│   ├── llm-efficiency/
+│   │   ├── modular_optimization_roadmap.md
+│   │   └── game_based_learning_guide.md
+│   ├── speed-wins.md             # Technical foundation
+│   └── models.md                 # Intelligence scaffolding
+├── docs/                         # Additional documentation
+├── package.json                  # Node.js dependencies
+├── tsconfig.json                 # TypeScript configuration
+├── vite.config.ts               # Vite build configuration
+└── tailwind.config.js           # Tailwind CSS configuration
 ```
 
 ## 🚀 Quick Start
 
-### Frontend (React App)
+### 1. Backend Setup (API Server)
 ```bash
+cd backend
+pip install flask flask-cors
+
+# Run web API for React frontend
+python run_game.py --mode web
+# Server runs on http://localhost:5001
+```
+
+### 2. Frontend Setup (React Game)
+```bash
+# Install dependencies
 npm install
-# Create .env file with your OpenRouter API key
-echo "VITE_OPENROUTER_API_KEY=your-api-key-here" > .env
+
+# Start development server
 npm run dev
+# Frontend runs on http://localhost:5173
 ```
 
-### Backend (Python Web App)
+### 3. Terminal Game (Optional)
 ```bash
-cd backend/web_app
-pip install -r requirements.txt
-python web_app.py
+cd backend
+python run_game.py --mode terminal
 ```
 
-### CLI Game
-```bash
-cd backend/game
-python llm_efficiency_game.py
-```
+## 🔧 Prerequisites
 
-## 🔧 Setup Instructions
-
-### Prerequisites
-- Node.js and npm
-- Python 3.x
-- OpenRouter API key (optional, for AI features)
-
-### Frontend Setup
-1. Install dependencies: `npm install`
-2. Create `.env` file with your OpenRouter API key (optional)
-3. Run: `npm run dev`
-
-### Backend Setup
-1. Navigate to `backend/web_app/`
-2. Install Python dependencies: `pip install -r requirements.txt`
-3. Run: `python web_app.py`
-
-### API Configuration (Optional)
-The app works in **Offline Mode** by default with predefined combinations. To enable AI-powered combinations:
-
-1. Get an OpenRouter API key from [OpenRouter](https://openrouter.ai/)
-2. Add it to your `.env` file: `VITE_OPENROUTER_API_KEY=your-api-key-here`
-3. Restart the development server
-
-**Modes:**
-- **💡 Offline Mode** (Default): Uses predefined combinations, works immediately
-- **🤖 AI Mode** (With API key): Uses OpenRouter API for dynamic combinations
+- **Node.js** and npm (for React frontend)
+- **Python 3.7+** (for Flask backend)
+- No API keys required - works completely offline!
 
 ## 🎮 How to Play
 
-1. **Drag & Drop**: Drag AI concepts from the panel to the workspace
-2. **Combine**: Drop one element onto another to create new combinations
-3. **Discover**: AI generates new concepts based on your combinations
-4. **Progress**: Track discoveries and unlock achievements
+### Game Mechanics
+1. **Click or Drag**: Add concepts from sidebar to canvas
+2. **Combine**: Drag elements close together to discover new concepts
+3. **Remove**: Hover over canvas elements and click × to remove
+4. **Progress**: Track score, level, and discovery progress
 
-## 📚 Learning Resources
+### Starting Concepts
+- **Linear Algebra** (⭐) - Mathematical foundation
+- **Calculus** (⭐) - Derivatives and optimization  
+- **Probability** (⭐) - Statistical foundations
 
-- **Learning Roadmap**: `docs/llm_efficiency_learning_roadmap.md`
-- **Practical Guide**: `docs/llm_efficiency_practical_guide.md`
-- **Research Papers**: `research/` directory
-- **Concept Data**: `data/llm_efficiency_concepts.json`
+### Discovery Examples
+- Linear Algebra + Calculus + Probability → **Neural Networks**
+- Neural Networks + Linear Algebra → **Attention Mechanism**
+- Attention + Memory Bandwidth → **FlashAttention**
+- State Space Models + Gating → **Mamba**
 
-## 🔬 Research Components
+## 📚 Learning Integration
 
-- **Main Paper**: `research/paper.md`
-- **Dimensional Analysis**: `research/dimensions.md`
-- **Model Documentation**: `research/models.md`
-- **Resonance Theory**: `research/resonance.md`
+### Game → Implementation Flow
+1. **Discover concepts** through game combinations
+2. **Understand relationships** between techniques
+3. **Implement discoveries** using the modular roadmap
+4. **Validate improvements** with measurement infrastructure
 
-## 🛠️ Development
+### Key Resources
+- `research/llm-efficiency/modular_optimization_roadmap.md` - Implementation guide
+- `research/llm-efficiency/game_based_learning_guide.md` - How to use game for learning
+- `research/speed-wins.md` - Technical foundation (Speed Always Wins survey)
+- `data/llm_efficiency_concepts_complete.json` - 100+ concept database
 
-### Frontend Development
-- Built with React 18 + TypeScript
-- Uses Vite for fast development
-- Styled with Tailwind CSS
-- Main component: `src/components/AiInfiniteCraft.tsx`
+## 🛠️ Technical Details
 
-### Backend Development
-- Flask web application in `backend/web_app/`
-- CLI game in `backend/game/`
-- Python-based with comprehensive requirements
+### Frontend Stack
+- **React 18** + TypeScript for robust UI
+- **Vite** for fast development and building
+- **Tailwind CSS** for responsive styling
+- **Main Component**: `LLMEfficiencyGame.tsx`
 
-### Data Management
-- Concept definitions in `data/llm_efficiency_concepts.json`
-- Extensible structure for adding new concepts
+### Backend Stack
+- **Flask** API server with CORS support
+- **Python game engine** with concept relationships
+- **JSON database** with 100+ LLM efficiency concepts
+- **Unified runner** for terminal or web modes
+
+### Game Database
+- Comprehensive concept definitions in `data/llm_efficiency_concepts_complete.json`
+- Real research relationships between techniques
+- Difficulty progression from basic math to production systems
+- Extensible structure for adding new discoveries
 
 ## 📊 Features
 
-- **Interactive Gameplay**: Drag-and-drop interface
-- **AI-Powered Combinations**: OpenRouter API integration
-- **Progress Tracking**: Discovery and achievement system
-- **Responsive Design**: Works on desktop and mobile
-- **Search & Filter**: Find elements by name or category
-- **Rarity System**: Common to Legendary concept tiers
+### Core Gameplay
+- **InfiniteCraft-style** drag-and-drop interface
+- **Click to add** elements to canvas
+- **Proximity-based combination** detection
+- **Element removal** with hover controls
+- **Responsive canvas** that adapts to screen size
+
+### Learning Features  
+- **100+ concepts** from basic math to production optimization
+- **Real relationships** mirror actual research evolution
+- **Progress tracking** by difficulty and category
+- **Hint system** for guided discovery
+- **Search and filter** by name, category, difficulty
+
+### Integration Features
+- **Module mapping** - each discovery connects to implementation guide
+- **Validation checkpoints** for measuring improvements
+- **Resource links** to papers and tutorials
+- **Save/load** game progress
 
 ## 🔍 Troubleshooting
 
-### Common Issues
-1. **API Key Problems**: Ensure OpenRouter API key is correctly set (optional)
-2. **Port Conflicts**: Vite will auto-select next available port
-3. **Build Issues**: Clear node_modules and reinstall if needed
+### Setup Issues
+- **Port conflicts**: Backend uses 5001, frontend uses 5173
+- **Python dependencies**: Run `pip install flask flask-cors`
+- **Node issues**: Clear `node_modules` and reinstall if needed
 
-### Offline Mode (Default)
-- App works immediately without any API key
-- Uses 10+ predefined AI concept combinations
-- No setup required - just run `npm run dev`
+### Game Issues
+- **Elements not combining**: Drag closer together (< 80px distance)
+- **Elements outside canvas**: Resize handling keeps them in bounds
+- **Duplicates**: Each element has unique key, no duplication issues
 
-### AI Mode (Optional)
-- Requires valid OpenRouter API key
-- Uses Claude 3.5 Sonnet for dynamic combinations
-- Graceful fallback to offline mode if API fails
+### Performance
+- **Large concept database**: Lazy loading and filtering optimize performance
+- **Memory usage**: Canvas elements are efficiently managed
+- **Responsive**: Works on desktop, tablet, and mobile
 
-### Getting Help
-- Check `API_SETUP.md` for detailed API configuration
-- The app works perfectly in offline mode by default
+## 📦 Self-Contained Project
 
-## 📦 Portability
+This project is completely self-contained:
+- ✅ **No external APIs** required
+- ✅ **Complete concept database** included
+- ✅ **Full documentation** and guides
+- ✅ **Ready to run** with minimal setup
+- ✅ **Extensible** for adding new concepts
 
-This entire directory is self-contained and can be:
-- Copied to any location
-- Shared as a complete project
-- Deployed independently
-- Used for development or production
+Perfect for learning LLM efficiency through discovery and hands-on implementation!
 
 ## 📄 License
 
-MIT License - feel free to use this project for learning and experimentation!
-
----
-
-**Note**: This is the original, properly organized AI Infinite Craft project. All components are included and properly structured for easy deployment and development.
+MIT License - Use freely for learning, research, and development.
