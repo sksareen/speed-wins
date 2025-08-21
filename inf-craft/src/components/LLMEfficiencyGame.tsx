@@ -47,7 +47,9 @@ interface GameStats {
   difficulty_progress: Record<string, any>;
 }
 
-const API_BASE = 'http://localhost:5001/api';
+const API_BASE = import.meta.env.PROD 
+  ? 'https://llm-efficiency-game-backend.fly.dev/api' 
+  : 'http://localhost:5001/api';
 
 const LLMEfficiencyGame: React.FC = () => {
   const [elements, setElements] = useState<Element[]>([]);
@@ -98,7 +100,15 @@ const LLMEfficiencyGame: React.FC = () => {
 
   const openDocumentation = async (filename: string) => {
     try {
-      const response = await fetch(`${API_BASE}/docs/${filename}`);
+      let response;
+      if (import.meta.env.PROD) {
+        // In production, serve from static files
+        response = await fetch(`/docs/${filename}`);
+      } else {
+        // In development, use the API
+        response = await fetch(`${API_BASE}/docs/${filename}`);
+      }
+      
       if (response.ok) {
         const content = await response.text();
         setDocContent(content);
@@ -182,6 +192,22 @@ const LLMEfficiencyGame: React.FC = () => {
 
   const loadGameState = async () => {
     try {
+      if (import.meta.env.PROD) {
+        // In production, show a message that backend is not available
+        console.log('Running in production mode - backend features disabled');
+        setElements([]);
+        setGameStats({
+          score: 0,
+          level: 1,
+          total_concepts: 0,
+          discovered_concepts: 0,
+          overall_progress: 0,
+          category_progress: {},
+          difficulty_progress: {}
+        });
+        return;
+      }
+
       // Get all concepts
       const conceptsRes = await fetch(`${API_BASE}/concepts`, {
         credentials: 'include'
@@ -283,6 +309,14 @@ const LLMEfficiencyGame: React.FC = () => {
     const workspaceEl1 = workspaceElements.find(el => el.id === element1.id);
     const workspaceEl2 = workspaceElements.find(el => el.id === element2.id);
 
+    if (import.meta.env.PROD) {
+      // In production, show a message that backend is not available
+      setCombineMessage('Backend not available in production mode');
+      setIsGenerating(false);
+      setTimeout(() => setCombineMessage(''), 3000);
+      return;
+    }
+
     try {
       const response = await fetch(`${API_BASE}/combine`, {
         method: 'POST',
@@ -360,6 +394,12 @@ const LLMEfficiencyGame: React.FC = () => {
   };
 
   const getHintFromAPI = async () => {
+    if (import.meta.env.PROD) {
+      setHint('Backend not available in production mode. Try combining different concepts!');
+      setShowHint(true);
+      return;
+    }
+
     try {
       const response = await fetch(`${API_BASE}/hint`, {
         method: 'POST',
@@ -375,6 +415,21 @@ const LLMEfficiencyGame: React.FC = () => {
 
   const resetGame = async () => {
     if (!confirm('Are you sure you want to reset your progress?')) return;
+
+    if (import.meta.env.PROD) {
+      setElements([]);
+      setWorkspaceElements([]);
+      setGameStats({
+        score: 0,
+        level: 1,
+        total_concepts: 0,
+        discovered_concepts: 0,
+        overall_progress: 0,
+        category_progress: {},
+        difficulty_progress: {}
+      });
+      return;
+    }
 
     try {
       await fetch(`${API_BASE}/reset`, {
@@ -424,6 +479,7 @@ const LLMEfficiencyGame: React.FC = () => {
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="w-full px-3 py-2 bg-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-slate-600"
+            aria-label="Filter by category"
           >
             <option value="all">All Categories</option>
             {categories.map(cat => (

@@ -520,8 +520,15 @@ def get_hint():
 @app.route('/api/docs/<filename>')
 def get_documentation(filename):
     """Serve markdown documentation files"""
-    # Define the path to the documentation files - pointing to /inf-craft/docs
-    docs_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'docs')
+    # Define the path to the documentation files
+    # In production (deployed), docs are in the local docs directory
+    # In development, docs are in the parent directory
+    if os.path.exists(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'docs')):
+        # Development: docs are in /inf-craft/docs
+        docs_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'docs')
+    else:
+        # Production: docs are in /app/docs (copied during Docker build)
+        docs_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'docs')
     
     # Validate filename to prevent directory traversal
     allowed_files = [
@@ -554,4 +561,5 @@ def health_check():
     return jsonify({'status': 'healthy', 'version': '1.0.0'})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    port = int(os.environ.get('PORT', 5001))
+    app.run(debug=False, host='0.0.0.0', port=port)
