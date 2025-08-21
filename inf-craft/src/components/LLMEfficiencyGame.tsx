@@ -86,6 +86,52 @@ const LLMEfficiencyGame: React.FC = () => {
     initializeGame();
   }, []);
 
+  // Handle window resize to keep elements in bounds
+  useEffect(() => {
+    const handleResize = () => {
+      if (!workspaceRef.current) return;
+      
+      const rect = workspaceRef.current.getBoundingClientRect();
+      setWorkspaceElements(prev => prev.map(el => ({
+        ...el,
+        x: Math.max(60, Math.min(el.x, rect.width - 60)),
+        y: Math.max(30, Math.min(el.y, rect.height - 30))
+      })));
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const removeElementFromCanvas = (elementKey: string) => {
+    setWorkspaceElements(prev => prev.filter(el => el.key !== elementKey));
+  };
+
+  const handleWorkspaceElementDrag = (e: React.DragEvent, element: WorkspaceElement) => {
+    e.stopPropagation();
+    setDraggedElement(element);
+    
+    // Store the initial mouse position relative to element
+    const rect = e.currentTarget.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left - 60; // 60 is half width
+    const offsetY = e.clientY - rect.top - 30; // 30 is half height
+    
+    e.dataTransfer.setData('offsetX', offsetX.toString());
+    e.dataTransfer.setData('offsetY', offsetY.toString());
+  };
+
+  const moveWorkspaceElement = (elementKey: string, newX: number, newY: number) => {
+    if (!workspaceRef.current) return;
+    
+    const rect = workspaceRef.current.getBoundingClientRect();
+    const boundedX = Math.max(60, Math.min(newX, rect.width - 60));
+    const boundedY = Math.max(30, Math.min(newY, rect.height - 30));
+    
+    setWorkspaceElements(prev => prev.map(el => 
+      el.key === elementKey ? { ...el, x: boundedX, y: boundedY } : el
+    ));
+  };
+
   const initializeGame = async () => {
     try {
       // Create new session
@@ -125,9 +171,31 @@ const LLMEfficiencyGame: React.FC = () => {
 
   const handleDragStart = (e: React.DragEvent, element: Element) => {
     setDraggedElement(element);
+    e.dataTransfer.setData('text/plain', element.id);
     if (soundEnabled) {
       // Play drag sound
     }
+  };
+
+  const addElementToCanvas = (element: Element, x?: number, y?: number) => {
+    if (!workspaceRef.current) return;
+    
+    const rect = workspaceRef.current.getBoundingClientRect();
+    const canvasX = x ?? Math.random() * (rect.width - 120) + 60;
+    const canvasY = y ?? Math.random() * (rect.height - 60) + 30;
+    
+    const newWorkspaceElement: WorkspaceElement = {
+      ...element,
+      x: Math.max(60, Math.min(canvasX, rect.width - 60)),
+      y: Math.max(30, Math.min(canvasY, rect.height - 30)),
+      key: `${element.id}-${Date.now()}-${Math.random()}`
+    };
+    
+    setWorkspaceElements(prev => [...prev, newWorkspaceElement]);
+  };
+
+  const handleElementClick = (element: Element) => {
+    addElementToCanvas(element);
   };
 
   const handleDrop = async (e: React.DragEvent) => {
@@ -135,26 +203,42 @@ const LLMEfficiencyGame: React.FC = () => {
     if (!draggedElement || !workspaceRef.current) return;
 
     const rect = workspaceRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const offsetX = parseInt(e.dataTransfer.getData('offsetX') || '0');
+    const offsetY = parseInt(e.dataTransfer.getData('offsetY') || '0');
+    const x = e.clientX - rect.left - offsetX;
+    const y = e.clientY - rect.top - offsetY;
 
-    // Check for combination with existing elements
-    const targetElement = workspaceElements.find(el => {
-      const distance = Math.sqrt(Math.pow(el.x - x, 2) + Math.pow(el.y - y, 2));
-      return distance < 50;
-    });
+    // Check if this is a workspace element being moved
+    const draggedWorkspaceElement = workspaceElements.find(el => el.key === (draggedElement as WorkspaceElement).key);
+    
+    if (draggedWorkspaceElement) {
+      // Check for combination with other workspace elements
+      const targetElement = workspaceElements.find(el => {
+        if (el.key === draggedWorkspaceElement.key) return false;
+        const distance = Math.sqrt(Math.pow(el.x - x, 2) + Math.pow(el.y - y, 2));
+        return distance < 80;
+      });
 
-    if (targetElement && targetElement.id !== draggedElement.id) {
-      await combineElements(draggedElement, targetElement);
+      if (targetElement) {
+        await combineElements(draggedElement, targetElement);
+      } else {
+        // Just move the element
+        moveWorkspaceElement(draggedWorkspaceElement.key, x, y);
+      }
     } else {
-      // Add to workspace
-      const newWorkspaceElement: WorkspaceElement = {
-        ...draggedElement,
-        x,
-        y,
-        key: `${draggedElement.id}-${Date.now()}`
-      };
-      setWorkspaceElements([...workspaceElements, newWorkspaceElement]);
+      // This is a new element from the sidebar
+      // Check for combination with existing elements
+      const targetElement = workspaceElements.find(el => {
+        const distance = Math.sqrt(Math.pow(el.x - x, 2) + Math.pow(el.y - y, 2));
+        return distance < 80;
+      });
+
+      if (targetElement) {
+        await combineElements(draggedElement, targetElement);
+      } else {
+        // Add to workspace at drop position
+        addElementToCanvas(draggedElement, x, y);
+      }
     }
 
     setDraggedElement(null);
@@ -163,6 +247,10 @@ const LLMEfficiencyGame: React.FC = () => {
   const combineElements = async (element1: Element, element2: Element) => {
     setIsGenerating(true);
     setCombineMessage('Combining concepts...');
+
+    // Find workspace elements being combined
+    const workspaceEl1 = workspaceElements.find(el => el.id === element1.id);
+    const workspaceEl2 = workspaceElements.find(el => el.id === element2.id);
 
     try {
       const response = await fetch(`${API_BASE}/combine`, {
@@ -199,14 +287,31 @@ const LLMEfficiencyGame: React.FC = () => {
           } : null);
         }
 
-        // Add to workspace
-        const newWorkspaceElement: WorkspaceElement = {
-          ...result.newElement,
-          x: Math.random() * 400 + 100,
-          y: Math.random() * 300 + 100,
-          key: `${result.newElement.id}-${Date.now()}`
-        };
-        setWorkspaceElements(prev => [...prev, newWorkspaceElement]);
+        // Remove the two elements that were combined and add the new one
+        const combinationX = workspaceEl1 && workspaceEl2 ? 
+          (workspaceEl1.x + workspaceEl2.x) / 2 : 
+          Math.random() * 400 + 200;
+        const combinationY = workspaceEl1 && workspaceEl2 ? 
+          (workspaceEl1.y + workspaceEl2.y) / 2 : 
+          Math.random() * 300 + 150;
+
+        setWorkspaceElements(prev => {
+          // Remove the combined elements
+          const filtered = prev.filter(el => 
+            !(el.id === element1.id && el.key === workspaceEl1?.key) &&
+            !(el.id === element2.id && el.key === workspaceEl2?.key)
+          );
+          
+          // Add the new element at combination position
+          const newElement: WorkspaceElement = {
+            ...result.newElement!,
+            x: combinationX,
+            y: combinationY,
+            key: `${result.newElement!.id}-${Date.now()}-${Math.random()}`
+          };
+          
+          return [...filtered, newElement];
+        });
 
         if (soundEnabled) {
           // Play success sound
@@ -330,7 +435,8 @@ const LLMEfficiencyGame: React.FC = () => {
               key={element.id}
               draggable
               onDragStart={(e) => handleDragStart(e, element)}
-              className={`p-3 rounded-lg border-2 cursor-move transition-all hover:scale-105 ${rarityColors[element.rarity]}`}
+              onClick={() => handleElementClick(element)}
+              className={`p-3 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 active:scale-95 ${rarityColors[element.rarity]}`}
               onMouseEnter={() => setShowTooltip(element.id)}
               onMouseLeave={() => setShowTooltip(null)}
             >
@@ -360,6 +466,9 @@ const LLMEfficiencyGame: React.FC = () => {
                       ))}
                     </div>
                   )}
+                  <div className="mt-1 text-green-400 text-xs">
+                    Click to add to canvas • Drag to position
+                  </div>
                 </div>
               )}
             </div>
@@ -430,8 +539,10 @@ const LLMEfficiencyGame: React.FC = () => {
             <div className="absolute inset-0 flex items-center justify-center text-gray-600">
               <div className="text-center">
                 <Layers className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p className="text-lg">Drag concepts here to combine them</p>
-                <p className="text-sm mt-2">Drop concepts close together to discover new ones!</p>
+                <p className="text-lg">Click or drag concepts here to combine them</p>
+                <p className="text-sm mt-2">• Click concepts in sidebar to add them</p>
+                <p className="text-sm">• Drag elements close together to discover new ones</p>
+                <p className="text-sm">• Hover over elements to remove them</p>
               </div>
             </div>
           )}
@@ -439,18 +550,29 @@ const LLMEfficiencyGame: React.FC = () => {
           {workspaceElements.map((element) => (
             <div
               key={element.key}
-              className={`absolute p-3 rounded-lg border-2 cursor-move transition-all hover:scale-110 hover:z-10 ${rarityColors[element.rarity]}`}
+              className={`absolute p-3 rounded-lg border-2 cursor-move transition-all hover:scale-110 hover:z-10 group ${rarityColors[element.rarity]}`}
               style={{
                 left: element.x - 60,
                 top: element.y - 30,
                 width: '120px'
               }}
               draggable
-              onDragStart={(e) => handleDragStart(e, element)}
+              onDragStart={(e) => handleWorkspaceElementDrag(e, element)}
             >
+              {/* Remove button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeElementFromCanvas(element.key);
+                }}
+                className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 hover:bg-red-600 rounded-full text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+              >
+                ×
+              </button>
+              
               <div className="text-center">
                 <div className="text-2xl mb-1">{element.emoji}</div>
-                <div className="text-xs font-semibold">{element.name}</div>
+                <div className="text-xs font-semibold leading-tight">{element.name}</div>
               </div>
             </div>
           ))}
