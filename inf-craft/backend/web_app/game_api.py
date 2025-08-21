@@ -521,7 +521,7 @@ def get_hint():
 def get_documentation(filename):
     """Serve markdown documentation files"""
     # Define the path to the documentation files
-    docs_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), 'research', 'llm-efficiency')
+    docs_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), 'research', 'docs')
     
     # Validate filename to prevent directory traversal
     allowed_files = [
