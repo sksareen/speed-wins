@@ -411,7 +411,7 @@ const LLMEfficiencyGame: React.FC = () => {
         <div className="p-4 border-b border-slate-700">
           <h2 className="text-xl font-bold flex items-center gap-2">
             <Brain className="w-5 h-5 text-indigo-400" />
-            LLM Efficiency Lab
+            LLM Infinite Craft
           </h2>
         </div>
 
