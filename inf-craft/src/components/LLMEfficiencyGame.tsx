@@ -64,11 +64,11 @@ const LLMEfficiencyGame: React.FC = () => {
   const workspaceRef = useRef<HTMLDivElement>(null);
 
   const rarityColors = {
-    common: 'bg-gray-100 border-gray-300 text-gray-800',
-    uncommon: 'bg-green-50 border-green-300 text-green-800',
-    rare: 'bg-blue-50 border-blue-300 text-blue-800',
-    epic: 'bg-purple-50 border-purple-300 text-purple-800',
-    legendary: 'bg-yellow-50 border-yellow-400 text-yellow-800'
+    common: 'bg-gray-100 border-gray-400 text-gray-900 hover:bg-gray-200',
+    uncommon: 'bg-green-100 border-green-500 text-green-900 hover:bg-green-200',
+    rare: 'bg-blue-100 border-blue-500 text-blue-900 hover:bg-blue-200',
+    epic: 'bg-purple-100 border-purple-500 text-purple-900 hover:bg-purple-200',
+    legendary: 'bg-amber-100 border-amber-500 text-amber-900 hover:bg-amber-200'
   };
 
   const categoryIcons: Record<string, React.ReactNode> = {
@@ -373,53 +373,33 @@ const LLMEfficiencyGame: React.FC = () => {
   const categories = Array.from(new Set(elements.map(el => el.category)));
 
   return (
-    <div className="h-screen bg-gray-950 text-white flex">
+    <div className="h-screen bg-slate-900 text-slate-100 flex">
       {/* Left Panel - Discovered Elements */}
-      <div className="w-80 bg-gray-900 border-r border-gray-800 flex flex-col">
-        <div className="p-4 border-b border-gray-800">
-          <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
-            <Brain className="w-5 h-5 text-purple-400" />
+      <div className="w-80 bg-slate-800 border-r border-slate-700 flex flex-col">
+        <div className="p-4 border-b border-slate-700">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <Brain className="w-5 h-5 text-indigo-400" />
             LLM Efficiency Lab
           </h2>
-          
-          {/* Stats Bar */}
-          {gameStats && (
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="bg-gray-800 rounded px-2 py-1">
-                <span className="text-gray-400">Score:</span> 
-                <span className="ml-1 font-bold text-yellow-400">{gameStats.score}</span>
-              </div>
-              <div className="bg-gray-800 rounded px-2 py-1">
-                <span className="text-gray-400">Level:</span> 
-                <span className="ml-1 font-bold text-green-400">{gameStats.level}</span>
-              </div>
-              <div className="bg-gray-800 rounded px-2 py-1 col-span-2">
-                <span className="text-gray-400">Progress:</span> 
-                <span className="ml-1 font-bold text-blue-400">
-                  {gameStats.discovered_concepts}/{gameStats.total_concepts} ({Math.round(gameStats.overall_progress)}%)
-                </span>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Search and Filter */}
         <div className="p-3 space-y-2">
           <div className="relative">
-            <Search className="absolute left-2 top-2.5 w-4 h-4 text-gray-500" />
+            <Search className="absolute left-2 top-2.5 w-4 h-4 text-slate-400" />
             <input
               type="text"
               placeholder="Search concepts..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-8 pr-3 py-2 bg-gray-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full pl-8 pr-3 py-2 bg-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-slate-600"
             />
           </div>
           
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full px-3 py-2 bg-gray-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-3 py-2 bg-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-slate-600"
           >
             <option value="all">All Categories</option>
             {categories.map(cat => (
@@ -457,16 +437,16 @@ const LLMEfficiencyGame: React.FC = () => {
               </div>
               
               {showTooltip === element.id && (
-                <div className="mt-2 p-2 bg-black/50 rounded text-xs">
+                <div className="mt-2 p-2 bg-slate-800/90 rounded text-xs text-slate-100 border border-slate-600">
                   {element.description}
                   {element.properties && Object.keys(element.properties).length > 0 && (
-                    <div className="mt-1 text-gray-400">
+                    <div className="mt-1 text-slate-300">
                       {Object.entries(element.properties).slice(0, 2).map(([key, value]) => (
                         <div key={key}>{key}: {JSON.stringify(value)}</div>
                       ))}
                     </div>
                   )}
-                  <div className="mt-1 text-green-400 text-xs">
+                  <div className="mt-1 text-emerald-400 text-xs">
                     Click to add to canvas • Drag to position
                   </div>
                 </div>
@@ -476,24 +456,24 @@ const LLMEfficiencyGame: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="p-3 border-t border-gray-800 flex gap-2">
+        <div className="p-3 border-t border-slate-700 flex gap-2">
           <button
             onClick={getHintFromAPI}
-            className="flex-1 px-3 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
+            className="flex-1 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 text-white"
           >
             <HelpCircle className="w-4 h-4" />
             Hint
           </button>
           <button
             onClick={resetGame}
-            className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
+            className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 text-white"
           >
             <RefreshCw className="w-4 h-4" />
             Reset
           </button>
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+            className="px-3 py-2 bg-slate-600 hover:bg-slate-500 rounded-lg transition-colors text-white"
           >
             {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </button>
@@ -503,12 +483,12 @@ const LLMEfficiencyGame: React.FC = () => {
       {/* Main Workspace */}
       <div className="flex-1 flex flex-col">
         {/* Workspace Header */}
-        <div className="p-4 bg-gray-900 border-b border-gray-800 flex items-center justify-between">
+        <div className="p-4 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h3 className="text-lg font-semibold">Combination Workspace</h3>
+            <h3 className="text-lg font-semibold text-slate-100">Combination Workspace</h3>
             {combineMessage && (
               <div className={`px-3 py-1 rounded-lg text-sm ${
-                combineMessage.includes('🎉') ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
+                combineMessage.includes('🎉') ? 'bg-emerald-900 text-emerald-200 border border-emerald-700' : 'bg-amber-900 text-amber-200 border border-amber-700'
               }`}>
                 {combineMessage}
               </div>
@@ -517,7 +497,7 @@ const LLMEfficiencyGame: React.FC = () => {
           <div className="flex gap-2">
             <button
               onClick={() => setWorkspaceElements([])}
-              className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
+              className="px-3 py-1 bg-slate-600 hover:bg-slate-500 rounded text-sm transition-colors text-white"
             >
               Clear Workspace
             </button>
@@ -527,22 +507,22 @@ const LLMEfficiencyGame: React.FC = () => {
         {/* Workspace Area */}
         <div
           ref={workspaceRef}
-          className="flex-1 relative bg-gray-950"
+          className="flex-1 relative bg-slate-950"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           style={{
-            backgroundImage: 'radial-gradient(circle, #1a1a2e 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, #334155 1px, transparent 1px)',
             backgroundSize: '20px 20px'
           }}
         >
           {workspaceElements.length === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center text-gray-600">
+            <div className="absolute inset-0 flex items-center justify-center text-slate-500">
               <div className="text-center">
                 <Layers className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p className="text-lg">Click or drag concepts here to combine them</p>
-                <p className="text-sm mt-2">• Click concepts in sidebar to add them</p>
-                <p className="text-sm">• Drag elements close together to discover new ones</p>
-                <p className="text-sm">• Hover over elements to remove them</p>
+                <p className="text-lg text-slate-300">Click or drag concepts here to combine them</p>
+                <p className="text-sm mt-2 text-slate-400">• Click concepts in sidebar to add them</p>
+                <p className="text-sm text-slate-400">• Drag elements close together to discover new ones</p>
+                <p className="text-sm text-slate-400">• Hover over elements to remove them</p>
               </div>
             </div>
           )}
@@ -578,10 +558,10 @@ const LLMEfficiencyGame: React.FC = () => {
           ))}
 
           {isGenerating && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <div className="bg-gray-800 rounded-lg p-6 flex items-center gap-3">
-                <RefreshCw className="w-6 h-6 animate-spin text-purple-400" />
-                <span>Discovering new concepts...</span>
+            <div className="absolute inset-0 bg-slate-900/80 flex items-center justify-center">
+              <div className="bg-slate-800 rounded-lg p-6 flex items-center gap-3 border border-slate-600">
+                <RefreshCw className="w-6 h-6 animate-spin text-indigo-400" />
+                <span className="text-slate-100">Discovering new concepts...</span>
               </div>
             </div>
           )}
@@ -589,14 +569,14 @@ const LLMEfficiencyGame: React.FC = () => {
 
         {/* Hint Display */}
         {showHint && hint && (
-          <div className="p-3 bg-purple-900/50 border-t border-purple-800">
+          <div className="p-3 bg-indigo-900/50 border-t border-indigo-700">
             <div className="flex items-start gap-2">
-              <HelpCircle className="w-5 h-5 text-purple-400 mt-0.5" />
+              <HelpCircle className="w-5 h-5 text-indigo-400 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm text-purple-200">{hint}</p>
+                <p className="text-sm text-indigo-200">{hint}</p>
                 <button
                   onClick={() => setShowHint(false)}
-                  className="text-xs text-purple-400 hover:text-purple-300 mt-1"
+                  className="text-xs text-indigo-400 hover:text-indigo-300 mt-1"
                 >
                   Dismiss
                 </button>
@@ -607,10 +587,10 @@ const LLMEfficiencyGame: React.FC = () => {
       </div>
 
       {/* Right Panel - Stats and Info */}
-      <div className="w-80 bg-gray-900 border-l border-gray-800 flex flex-col">
-        <div className="p-4 border-b border-gray-800">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-yellow-400" />
+      <div className="w-80 bg-slate-800 border-l border-slate-700 flex flex-col">
+        <div className="p-4 border-b border-slate-700">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-100">
+            <Trophy className="w-5 h-5 text-amber-400" />
             Progress & Stats
           </h3>
         </div>
@@ -618,33 +598,48 @@ const LLMEfficiencyGame: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-4">
           {gameStats && (
             <div className="space-y-4">
+              {/* Game Stats */}
+              <div className="bg-slate-700 rounded-lg p-3 border border-slate-600">
+                <h4 className="text-sm font-semibold mb-2 text-slate-300">Game Stats</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-300">Score:</span> 
+                    <span className="font-bold text-amber-400">{gameStats.score}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-300">Level:</span> 
+                    <span className="font-bold text-emerald-400">{gameStats.level}</span>
+                  </div>
+                </div>
+              </div>
+
               {/* Overall Progress */}
-              <div className="bg-gray-800 rounded-lg p-3">
-                <h4 className="text-sm font-semibold mb-2 text-gray-400">Overall Progress</h4>
-                <div className="w-full bg-gray-700 rounded-full h-3">
+              <div className="bg-slate-700 rounded-lg p-3 border border-slate-600">
+                <h4 className="text-sm font-semibold mb-2 text-slate-300">Overall Progress</h4>
+                <div className="w-full bg-slate-600 rounded-full h-3">
                   <div
-                    className="bg-gradient-to-r from-purple-500 to-blue-500 h-3 rounded-full transition-all"
+                    className="bg-gradient-to-r from-indigo-500 to-sky-500 h-3 rounded-full transition-all"
                     style={{ width: `${gameStats.overall_progress}%` }}
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-slate-400 mt-1">
                   {gameStats.discovered_concepts} / {gameStats.total_concepts} concepts discovered
                 </p>
               </div>
 
               {/* Category Progress */}
-              <div className="bg-gray-800 rounded-lg p-3">
-                <h4 className="text-sm font-semibold mb-2 text-gray-400">Category Progress</h4>
+              <div className="bg-slate-700 rounded-lg p-3 border border-slate-600">
+                <h4 className="text-sm font-semibold mb-2 text-slate-300">Category Progress</h4>
                 <div className="space-y-2">
                   {Object.entries(gameStats.category_progress).slice(0, 5).map(([category, data]: [string, any]) => (
                     <div key={category}>
                       <div className="flex justify-between text-xs mb-1">
-                        <span className="capitalize">{category.replace('_', ' ')}</span>
-                        <span>{data.discovered}/{data.total}</span>
+                        <span className="capitalize text-slate-200">{category.replace('_', ' ')}</span>
+                        <span className="text-slate-300">{data.discovered}/{data.total}</span>
                       </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div className="w-full bg-slate-600 rounded-full h-2">
                         <div
-                          className="bg-green-500 h-2 rounded-full transition-all"
+                          className="bg-emerald-500 h-2 rounded-full transition-all"
                           style={{ width: `${data.percentage}%` }}
                         />
                       </div>
@@ -654,16 +649,16 @@ const LLMEfficiencyGame: React.FC = () => {
               </div>
 
               {/* Difficulty Progress */}
-              <div className="bg-gray-800 rounded-lg p-3">
-                <h4 className="text-sm font-semibold mb-2 text-gray-400">Difficulty Progress</h4>
+              <div className="bg-slate-700 rounded-lg p-3 border border-slate-600">
+                <h4 className="text-sm font-semibold mb-2 text-slate-300">Difficulty Progress</h4>
                 <div className="space-y-2">
                   {Object.entries(gameStats.difficulty_progress).map(([difficulty, data]: [string, any]) => (
                     <div key={difficulty} className="flex items-center justify-between">
-                      <span className="text-xs">{'⭐'.repeat(parseInt(difficulty))}</span>
-                      <span className="text-xs">{data.discovered}/{data.total}</span>
-                      <div className="flex-1 mx-2 bg-gray-700 rounded-full h-2">
+                      <span className="text-xs text-slate-200">{'⭐'.repeat(parseInt(difficulty))}</span>
+                      <span className="text-xs text-slate-300">{data.discovered}/{data.total}</span>
+                      <div className="flex-1 mx-2 bg-slate-600 rounded-full h-2">
                         <div
-                          className="bg-yellow-500 h-2 rounded-full transition-all"
+                          className="bg-amber-500 h-2 rounded-full transition-all"
                           style={{ width: `${data.percentage}%` }}
                         />
                       </div>

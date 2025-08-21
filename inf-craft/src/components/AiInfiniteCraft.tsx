@@ -70,19 +70,19 @@ const AiInfiniteCraft: React.FC = () => {
 
   const categories = ['all', 'fundamental', 'architecture', 'process', 'mathematical', 'application', 'advanced'];
   const rarityColors = {
-    common: 'bg-gray-100 border-gray-300 text-gray-800',
-    uncommon: 'bg-green-50 border-green-300 text-green-800',
-    rare: 'bg-blue-50 border-blue-300 text-blue-800',
-    epic: 'bg-purple-50 border-purple-300 text-purple-800',
-    legendary: 'bg-yellow-50 border-yellow-400 text-yellow-800'
+    common: 'bg-gray-100 border-gray-400 text-gray-900 hover:bg-gray-200',
+    uncommon: 'bg-green-100 border-green-500 text-green-900 hover:bg-green-200',
+    rare: 'bg-blue-100 border-blue-500 text-blue-900 hover:bg-blue-200',
+    epic: 'bg-purple-100 border-purple-500 text-purple-900 hover:bg-purple-200',
+    legendary: 'bg-amber-100 border-amber-500 text-amber-900 hover:bg-amber-200'
   };
 
   const rarityBadgeColors = {
-    common: 'bg-gray-200 text-gray-700',
-    uncommon: 'bg-green-200 text-green-700',
-    rare: 'bg-blue-200 text-blue-700',
-    epic: 'bg-purple-200 text-purple-700',
-    legendary: 'bg-yellow-200 text-yellow-700'
+    common: 'bg-gray-200 text-gray-800',
+    uncommon: 'bg-green-200 text-green-800',
+    rare: 'bg-blue-200 text-blue-800',
+    epic: 'bg-purple-200 text-purple-800',
+    legendary: 'bg-amber-200 text-amber-800'
   };
 
   // Predefined combinations for offline mode
@@ -434,16 +434,16 @@ Make it more advanced than inputs when logical. Avoid duplicates.`
   };
 
   return (
-    <div className="h-screen bg-white text-gray-900 flex flex-col overflow-hidden">
+    <div className="h-screen bg-slate-900 text-slate-100 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 shadow-sm">
+      <div className="bg-slate-800 border-b border-slate-700 px-4 py-3 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Brain className="w-6 h-6 text-blue-600" />
-            <h1 className="text-xl font-bold text-gray-900">
+            <Brain className="w-6 h-6 text-indigo-400" />
+            <h1 className="text-xl font-bold text-slate-100">
               AI Infinite Craft
             </h1>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-slate-300">
               {discoveredCount} elements
             </div>
           </div>
@@ -469,14 +469,14 @@ Make it more advanced than inputs when logical. Avoid duplicates.`
             
             <button 
               onClick={() => setSoundEnabled(!soundEnabled)} 
-              className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors text-slate-300"
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
             
             <button 
               onClick={() => setWorkspaceElements([])} 
-              className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-xs font-medium transition-colors"
+              className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-medium transition-colors"
             >
               Clear
             </button>
@@ -486,7 +486,7 @@ Make it more advanced than inputs when logical. Avoid duplicates.`
         {/* Status Message */}
         {combineMessage && (
           <div className="mt-2 text-center">
-            <div className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium border border-blue-200">
+            <div className="inline-block bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-medium border border-indigo-200">
               {combineMessage}
             </div>
           </div>
@@ -496,30 +496,30 @@ Make it more advanced than inputs when logical. Avoid duplicates.`
       {/* Main Content */}
       <div className="flex-1 flex gap-3 p-3 overflow-hidden">
         {/* Left Panel - Elements */}
-        <div className="w-80 bg-white border border-gray-200 rounded-lg p-3 shadow-sm flex flex-col">
+        <div className="w-80 bg-slate-800 border border-slate-700 rounded-lg p-3 shadow-sm flex flex-col">
           <div className="flex items-center gap-2 mb-3">
-            <Database className="w-4 h-4 text-gray-600" />
-            <span className="font-semibold text-sm">Elements</span>
-            <div className="ml-auto text-xs text-gray-500">{filteredElements.length}</div>
+            <Database className="w-4 h-4 text-slate-400" />
+            <span className="font-semibold text-sm text-slate-100">Elements</span>
+            <div className="ml-auto text-xs text-slate-400">{filteredElements.length}</div>
           </div>
           
           {/* Search & Filter */}
           <div className="space-y-2 mb-3">
             <div className="relative">
-              <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-7 pr-2 py-1.5 border border-gray-200 rounded-lg text-xs focus:border-blue-300 focus:ring-1 focus:ring-blue-100 outline-none"
+                className="w-full pl-7 pr-2 py-1.5 border border-slate-600 rounded-lg text-xs text-slate-100 placeholder-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 outline-none bg-slate-700"
               />
             </div>
             
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs focus:border-blue-300 focus:ring-1 focus:ring-blue-100 outline-none"
+              className="w-full px-2 py-1.5 border border-slate-600 rounded-lg text-xs text-slate-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 outline-none bg-slate-700"
               aria-label="Filter by category"
             >
               {categories.map(cat => (
@@ -550,9 +550,9 @@ Make it more advanced than inputs when logical. Avoid duplicates.`
                   
                   {/* Tooltip */}
                   {showTooltip === element.id && (
-                    <div className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-1 p-2 bg-gray-900 text-white border border-gray-700 rounded-lg shadow-xl w-48 text-xs">
+                    <div className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-1 p-2 bg-slate-800 text-slate-100 border border-slate-600 rounded-lg shadow-xl w-48 text-xs">
                       <div className="font-bold mb-1">{element.name}</div>
-                      <div className="text-gray-300 text-xs">{element.description}</div>
+                      <div className="text-slate-300 text-xs">{element.description}</div>
                     </div>
                   )}
                 </div>
@@ -562,9 +562,9 @@ Make it more advanced than inputs when logical. Avoid duplicates.`
         </div>
 
         {/* Center - Workspace */}
-        <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg border-dashed relative overflow-hidden">
+        <div className="flex-1 bg-slate-950 border border-slate-700 rounded-lg border-dashed relative overflow-hidden">
           <div className="absolute top-3 left-3 z-10">
-            <h2 className="text-sm font-semibold flex items-center text-gray-700">
+            <h2 className="text-sm font-semibold flex items-center text-slate-300">
               <Cpu className="w-4 h-4 mr-1" />
               Laboratory
             </h2>
@@ -613,7 +613,7 @@ Make it more advanced than inputs when logical. Avoid duplicates.`
 
             {workspaceElements.length === 0 && !isGenerating && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-gray-400">
+                <div className="text-center text-slate-400">
                   <Database className="w-12 h-12 mx-auto mb-2 opacity-50" />
                   <p className="text-sm">Drag elements here to combine</p>
                 </div>
@@ -621,10 +621,10 @@ Make it more advanced than inputs when logical. Avoid duplicates.`
             )}
 
             {isGenerating && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/80">
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80">
                 <div className="text-center">
-                  <Zap className="w-8 h-8 mx-auto mb-2 animate-spin text-blue-500" />
-                  <p className="text-sm text-gray-600">Processing...</p>
+                  <Zap className="w-8 h-8 mx-auto mb-2 animate-spin text-indigo-400" />
+                  <p className="text-sm text-slate-300">Processing...</p>
                 </div>
               </div>
             )}
