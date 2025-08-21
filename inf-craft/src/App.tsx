@@ -1,9 +1,9 @@
-import AiInfiniteCraft from './components/AiInfiniteCraft'
+import LLMEfficiencyGame from './components/LLMEfficiencyGame'
 
 function App() {
   return (
     <div className="App">
-      <AiInfiniteCraft />
+      <LLMEfficiencyGame />
     </div>
   )
 }

@@ -1,10 +1,10 @@
-# AI Infinite Craft - Complete Project
+# LLM Efficiency InfiniteCraft Game
 
-A comprehensive AI-powered learning platform that combines interactive gameplay, web applications, and research tools for exploring LLM efficiency concepts through discovery-based learning.
+Learn LLM optimization concepts through discovery and combination! This game teaches efficiency techniques by letting you discover concepts organically through the same relationships that exist in actual research.
 
 ## 🎯 Project Overview
 
-This project contains everything needed to run, develop, and research the AI Infinite Craft concept - a gamified approach to learning AI/ML concepts through interactive combination and discovery.
+This project combines gamified learning with practical implementation to master LLM efficiency optimization. Play the game to understand concept relationships, then implement what you discover using the modular roadmap.
 
 ## 📁 Directory Structure
 
