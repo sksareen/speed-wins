@@ -13,91 +13,102 @@ This roadmap provides a module-based approach to achieving instant-feeling AI re
 ### Goal
 Can't optimize what you can't measure. Build comprehensive profiling infrastructure.
 
-### Implementation Tasks
-1. **Latency Profiling Harness**
-   ```python
-   # Components to measure:
-   - Tokenization time
-   - Model loading time
-   - Attention computation
-   - FFN computation
-   - Memory transfers
-   - Decoding/sampling time
-   ```
+### Core Implementation
+```python
+import torch
+import time
+from typing import Dict, List
+import matplotlib.pyplot as plt
 
-2. **Quality Metrics Framework**
-   - Perplexity measurement
-   - Task-specific accuracy (your use cases)
-   - Human preference alignment
-   - Regression detection
-
-3. **A/B Testing Infrastructure**
-   - Request routing
-   - Metric collection
-   - Statistical significance testing
-   - Automatic rollback on regression
-
-4. **Baseline Measurements**
-   - GPT-4: Quality ceiling, latency floor
-   - GPT-3.5: Balanced baseline
-   - Current system: Starting point
+class LLMProfiler:
+    def __init__(self):
+        self.metrics = {}
+        
+    def profile_inference(self, model, inputs):
+        with torch.profiler.profile(
+            activities=[torch.profiler.ProfilerActivity.CPU, 
+                       torch.profiler.ProfilerActivity.CUDA],
+            record_shapes=True,
+            with_stack=True
+        ) as prof:
+            outputs = model(inputs)
+        
+        # Analyze bottlenecks
+        print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=10))
+        return outputs, prof
+    
+    def measure_memory_usage(self, model, batch_sizes=[1, 4, 16]):
+        memory_usage = {}
+        for batch_size in batch_sizes:
+            torch.cuda.empty_cache()
+            torch.cuda.reset_peak_memory_stats()
+            
+            inputs = torch.randn(batch_size, 512, model.config.hidden_size).cuda()
+            _ = model(inputs)
+            
+            memory_usage[batch_size] = torch.cuda.max_memory_allocated() / 1024**3
+        return memory_usage
+```
 
 ### Exit Criteria
-- Clear bottleneck identification (where is 80% of latency?)
-- Baseline metrics established
-- Can measure impact of any optimization
+- Can identify where 80% of latency comes from
+- Baseline metrics for quality, speed, memory established
+- Automated regression detection working
 
-### Resources
-- [PyTorch Profiler Documentation](https://pytorch.org/tutorials/recipes/recipes/profiler_recipe.html)
-- [NVIDIA Nsight for GPU profiling](https://developer.nvidia.com/nsight-systems)
-- Paper: "Efficiently Scaling Transformer Inference" (Pope et al., 2022)
+### Game Discovery Path
+In the InfiniteCraft game: Linear Algebra + Neural Networks → **Profiling** → **Bottleneck Analysis**
 
 ---
 
 ## Module 1: Small Model Baseline
 
 ### Goal
-Establish floor performance with minimal compute. Understand the size/quality/speed tradeoff curve.
+Establish floor performance with minimal compute. Map task complexity to minimum model requirements.
 
-### Implementation Tasks
+### Quick Implementation
+```python
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
 
-1. **Deploy Smallest Viable Models**
-   ```python
-   models_to_test = {
-       "Qwen2.5-0.5B": {"params": 0.5B, "context": 32k},
-       "Phi-3-mini": {"params": 3.8B, "context": 128k},
-       "Gemma-2-2B": {"params": 2.6B, "context": 8k},
-       "Llama-3.2-1B": {"params": 1.2B, "context": 128k}
-   }
-   ```
-
-2. **Profile Each Model**
-   - Tokens per second
-   - First token latency
-   - Memory usage
-   - Quality on YOUR tasks
-
-3. **Task Complexity Mapping**
-   - Simple queries (classification, extraction) → Smallest models
-   - Medium complexity (summarization, QA) → Medium models
-   - Complex reasoning → Larger models
-   - Create decision tree
-
-4. **Optimization Techniques**
-   - Compile with torch.compile()
-   - Use ONNX runtime
-   - Implement continuous batching
-   - Test different precision (FP16, BF16)
+def benchmark_small_models():
+    models = {
+        "microsoft/Phi-3-mini-4k-instruct": "3.8B params",
+        "Qwen/Qwen2.5-0.5B-Instruct": "0.5B params", 
+        "google/gemma-2-2b-it": "2.6B params"
+    }
+    
+    results = {}
+    for model_name, size in models.items():
+        print(f"\nTesting {model_name} ({size})")
+        
+        # Load model
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name, torch_dtype=torch.float16, device_map="auto"
+        )
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        
+        # Benchmark
+        start_time = time.time()
+        inputs = tokenizer("Explain attention mechanism", return_tensors="pt")
+        outputs = model.generate(**inputs, max_new_tokens=50)
+        end_time = time.time()
+        
+        results[model_name] = {
+            "latency": end_time - start_time,
+            "memory": torch.cuda.max_memory_allocated() / 1024**3,
+            "output": tokenizer.decode(outputs[0])
+        }
+    
+    return results
+```
 
 ### Exit Criteria
-- Know minimum model size for each task type
-- Achieve <50ms latency for simple tasks
-- Quality threshold defined for each use case
+- Latency < 50ms for simple tasks with smallest model
+- Quality threshold defined for each complexity level
+- Clear task → model size mapping
 
-### Resources
-- [Qwen2.5 Technical Report](https://arxiv.org/abs/2409.12186)
-- [Phi-3 Technical Report](https://arxiv.org/abs/2404.14219)
-- [Small Language Models Survey](https://arxiv.org/abs/2410.12391)
+### Game Discovery Path
+Game: Neural Networks + Optimization → **Model Selection** → **Small Models**
 
 ---
 
