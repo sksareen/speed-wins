@@ -520,8 +520,8 @@ def get_hint():
 @app.route('/api/docs/<filename>')
 def get_documentation(filename):
     """Serve markdown documentation files"""
-    # Define the path to the documentation files
-    docs_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), 'research', 'docs')
+    # Define the path to the documentation files - pointing to /inf-craft/docs
+    docs_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'docs')
     
     # Validate filename to prevent directory traversal
     allowed_files = [

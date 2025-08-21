@@ -81,10 +81,16 @@ class LLMEfficiencyGame:
         # Start with basic mathematical foundations
         starting_concepts = ['linear_algebra', 'calculus', 'probability']
         
+        # Calculate initial score from starting concepts
+        initial_score = 0
+        for concept_id in starting_concepts:
+            if concept_id in self.concepts:
+                initial_score += self.concepts[concept_id].difficulty * 10
+        
         self.game_state = GameState(
             discovered_concepts=set(starting_concepts),
             available_combinations=[],
-            score=0,
+            score=initial_score,
             level=1,
             start_time=time.time(),
             session_time=0
