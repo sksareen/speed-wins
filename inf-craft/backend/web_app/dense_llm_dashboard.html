@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Architecture Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            color: #e0e0e0;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+        
+        .header {
+            background: #1a1a2e;
+            padding: 8px 12px;
+            border-bottom: 1px solid #16213e;
+        }
+        
+        h1 {
+            font-size: 18px;
+            color: #4a90e2;
+            margin-bottom: 2px;
+        }
+        
+        .subtitle {
+            font-size: 10px;
+            color: #888;
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 280px;
+            gap: 8px;
+            padding: 8px;
+            height: calc(100vh - 60px);
+        }
+        
+        .panel {
+            background: #0f0f1a;
+            border: 1px solid #2a2a40;
+            border-radius: 3px;
+            overflow-y: auto;
+        }
+        
+        .panel-title {
+            background: #16213e;
+            color: #4a90e2;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            border-bottom: 1px solid #2a2a40;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .architecture-grid {
+            padding: 6px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+        
+        .arch-item {
+            background: #1a1a2e;
+            border: 1px solid #2a2a40;
+            padding: 6px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background 0.2s;
+        }
+        
+        .arch-item:hover {
+            background: #2a2a40;
+            border-color: #4a90e2;
+        }
+        
+        .arch-item.active {
+            background: #16213e;
+            border-color: #4a90e2;
+        }
+        
+        .arch-item h3 {
+            font-size: 11px;
+            color: #4a90e2;
+            margin-bottom: 2px;
+        }
+        
+        .arch-item p {
+            font-size: 9px;
+            color: #999;
+            margin-bottom: 3px;
+        }
+        
+        .complexity-meter {
+            height: 3px;
+            background: #2a2a40;
+            border-radius: 1px;
+            overflow: hidden;
+        }
+        
+        .complexity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a90e2, #6bb6ff);
+            transition: width 0.3s;
+        }
+        
+        .stats-container {
+            padding: 6px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 4px;
+            background: #1a1a2e;
+            border: 1px solid #2a2a40;
+            border-radius: 2px;
+        }
+        
+        .stat-value {
+            font-size: 14px;
+            color: #4a90e2;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 9px;
+            color: #888;
+        }
+        
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .metrics-overview {
+            flex: 1;
+            padding: 8px;
+            overflow-y: auto;
+        }
+        
+        .metric-section {
+            margin-bottom: 12px;
+        }
+        
+        .metric-section h3 {
+            font-size: 11px;
+            color: #4a90e2;
+            margin-bottom: 4px;
+            border-bottom: 1px solid #2a2a40;
+            padding-bottom: 2px;
+        }
+        
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+            padding: 2px 0;
+        }
+        
+        .metric-label {
+            font-size: 10px;
+            color: #ccc;
+        }
+        
+        .metric-value {
+            font-size: 10px;
+            color: #4a90e2;
+            font-weight: bold;
+        }
+        
+        .metric-bar {
+            width: 80px;
+            height: 8px;
+            background: #2a2a40;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-left: 8px;
+        }
+        
+        .metric-bar-fill {
+            height: 100%;
+            background: #4a90e2;
+            transition: width 0.3s;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 3px 6px;
+            border: 1px solid #2a2a40;
+            font-size: 9px;
+            text-align: center;
+        }
+        
+        .comparison-table th {
+            background: #16213e;
+            color: #4a90e2;
+            font-weight: bold;
+        }
+        
+        .comparison-table td {
+            background: #1a1a2e;
+        }
+        
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .detail-content {
+            padding: 8px;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+        
+        .detail-content h2 {
+            color: #4a90e2;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+        
+        .detail-content p {
+            margin-bottom: 6px;
+            color: #ccc;
+        }
+        
+        .tech-list {
+            margin: 6px 0;
+        }
+        
+        .tech-item {
+            background: #1a1a2e;
+            border: 1px solid #2a2a40;
+            padding: 3px 6px;
+            margin: 2px 0;
+            border-radius: 2px;
+            font-size: 9px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .tech-name {
+            color: #4a90e2;
+        }
+        
+        .tech-status {
+            color: #999;
+        }
+        
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin: 8px 0;
+        }
+        
+        .pros, .cons {
+            padding: 4px;
+            border-radius: 2px;
+            font-size: 9px;
+        }
+        
+        .pros {
+            background: rgba(74, 144, 226, 0.1);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+        }
+        
+        .cons {
+            background: rgba(255, 100, 100, 0.1);
+            border: 1px solid rgba(255, 100, 100, 0.3);
+        }
+        
+        .pros h4, .cons h4 {
+            margin-bottom: 3px;
+            font-size: 10px;
+        }
+        
+        .pros h4 {
+            color: #4a90e2;
+        }
+        
+        .cons h4 {
+            color: #ff6464;
+        }
+        
+        .implementation-status {
+            margin: 8px 0;
+        }
+        
+        .status-bar {
+            background: #2a2a40;
+            height: 12px;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 4px 0;
+        }
+        
+        .status-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a90e2, #6bb6ff);
+            display: flex;
+            align-items: center;
+            padding: 0 4px;
+            color: #000;
+            font-size: 8px;
+            font-weight: bold;
+        }
+        
+        .benchmark-grid {
+            padding: 6px;
+        }
+        
+        .benchmark-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 0;
+            border-bottom: 1px solid #2a2a40;
+            font-size: 9px;
+        }
+        
+        .benchmark-item:last-child {
+            border-bottom: none;
+        }
+        
+        .benchmark-name {
+            color: #ccc;
+        }
+        
+        .benchmark-score {
+            color: #4a90e2;
+            font-weight: bold;
+        }
+        
+        .visualization-container {
+            padding: 8px;
+            text-align: center;
+        }
+        
+        #arch-canvas {
+            background: #1a1a2e;
+            border: 1px solid #2a2a40;
+            border-radius: 3px;
+            margin-bottom: 8px;
+        }
+        
+        .viz-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 10px;
+            color: #ccc;
+        }
+        
+        .viz-controls input[type="range"] {
+            background: #2a2a40;
+            height: 4px;
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .viz-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #4a90e2;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .viz-controls input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: #4a90e2;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>LLM Architecture Efficiency Dashboard</h1>
+        <p class="subtitle">Performance Analysis & Optimization Metrics</p>
+    </div>
+    
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="panel">
+                <div class="panel-title">Architecture Types</div>
+                <div class="architecture-grid">
+                    <div class="arch-item active" onclick="selectArchitecture('linear')">
+                        <h3>LINEAR</h3>
+                        <p>O(N) Complexity</p>
+                        <div class="complexity-meter">
+                            <div class="complexity-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="arch-item" onclick="selectArchitecture('sparse')">
+                        <h3>SPARSE</h3>
+                        <p>Selective Attn</p>
+                        <div class="complexity-meter">
+                            <div class="complexity-fill" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="arch-item" onclick="selectArchitecture('efficient')">
+                        <h3>OPTIMIZED</h3>
+                        <p>HW Efficient</p>
+                        <div class="complexity-meter">
+                            <div class="complexity-fill" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div class="arch-item" onclick="selectArchitecture('moe')">
+                        <h3>MoE</h3>
+                        <p>Expert Route</p>
+                        <div class="complexity-meter">
+                            <div class="complexity-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="arch-item" onclick="selectArchitecture('hybrid')">
+                        <h3>HYBRID</h3>
+                        <p>Mixed Mode</p>
+                        <div class="complexity-meter">
+                            <div class="complexity-fill" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="arch-item" onclick="selectArchitecture('diffusion')">
+                        <h3>DIFFUSION</h3>
+                        <p>Parallel Gen</p>
+                        <div class="complexity-meter">
+                            <div class="complexity-fill" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-title">Key Metrics</div>
+                <div class="stats-container">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="speedup">10x</div>
+                            <div class="stat-label">Speedup</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="memory">1/10</div>
+                            <div class="stat-label">Memory</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="context">∞</div>
+                            <div class="stat-label">Context</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="accuracy">95%</div>
+                            <div class="stat-label">Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-title">Benchmarks</div>
+                <div class="benchmark-grid" id="benchmarks">
+                    <div class="benchmark-item">
+                        <span class="benchmark-name">MMLU</span>
+                        <span class="benchmark-score">87.2</span>
+                    </div>
+                    <div class="benchmark-item">
+                        <span class="benchmark-name">HellaSwag</span>
+                        <span class="benchmark-score">91.5</span>
+                    </div>
+                    <div class="benchmark-item">
+                        <span class="benchmark-name">GSM8K</span>
+                        <span class="benchmark-score">78.9</span>
+                    </div>
+                    <div class="benchmark-item">
+                        <span class="benchmark-name">HumanEval</span>
+                        <span class="benchmark-score">65.4</span>
+                    </div>
+                    <div class="benchmark-item">
+                        <span class="benchmark-name">TruthfulQA</span>
+                        <span class="benchmark-score">72.1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="center-panel panel">
+            <div class="panel-title">Architecture Visualization</div>
+            <div class="visualization-container" id="visualization">
+                <canvas id="arch-canvas" width="500" height="200"></canvas>
+                <div class="viz-controls">
+                    <label>Sequence Length: <span id="seq-length">8</span></label>
+                    <input type="range" id="seq-slider" min="4" max="16" value="8" style="width: 100px;">
+                </div>
+            </div>
+            <div class="panel-title">Performance Analysis</div>
+            <div class="metrics-overview" id="metrics-overview">
+                <div class="metric-section">
+                    <h3>Computational Efficiency</h3>
+                    <div class="metric-row">
+                        <span class="metric-label">FLOPs Reduction</span>
+                        <span class="metric-value">90%</span>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Memory Bandwidth</span>
+                        <span class="metric-value">75%</span>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Cache Efficiency</span>
+                        <span class="metric-value">85%</span>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metric-section">
+                    <h3>Scaling Properties</h3>
+                    <div class="metric-row">
+                        <span class="metric-label">Sequence Length</span>
+                        <span class="metric-value">Linear</span>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Batch Size</span>
+                        <span class="metric-value">95%</span>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Model Size</span>
+                        <span class="metric-value">88%</span>
+                        <div class="metric-bar">
+                            <div class="metric-bar-fill" style="width: 88%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Architecture</th>
+                            <th>Complexity</th>
+                            <th>Memory</th>
+                            <th>Speed</th>
+                            <th>Accuracy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Transformer</td>
+                            <td>O(N²)</td>
+                            <td>1x</td>
+                            <td>1x</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td>Linear</td>
+                            <td>O(N)</td>
+                            <td>0.1x</td>
+                            <td>10x</td>
+                            <td>95%</td>
+                        </tr>
+                        <tr>
+                            <td>Sparse</td>
+                            <td>O(N√N)</td>
+                            <td>0.2x</td>
+                            <td>5x</td>
+                            <td>98%</td>
+                        </tr>
+                        <tr>
+                            <td>MoE</td>
+                            <td>O(N²/E)</td>
+                            <td>0.125x</td>
+                            <td>8x</td>
+                            <td>97%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="panel" style="flex: 2;">
+                <div class="panel-title">Architecture Details</div>
+                <div class="detail-content" id="details">
+                    <h2>LINEAR SEQUENCE MODELING</h2>
+                    <p>Transforms quadratic O(N²) attention to linear O(N) complexity through mathematical reformulation. Enables processing of unlimited sequence lengths with constant memory footprint.</p>
+                    
+                    <div class="implementation-status">
+                        <div class="metric-label">Implementation Progress</div>
+                        <div class="status-bar">
+                            <div class="status-fill" style="width: 85%">85% Complete</div>
+                        </div>
+                    </div>
+                    
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>Advantages</h4>
+                            <div>• Constant memory usage</div>
+                            <div>• Unlimited context window</div>
+                            <div>• Real-time inference</div>
+                            <div>• Linear scaling</div>
+                        </div>
+                        <div class="cons">
+                            <h4>Challenges</h4>
+                            <div>• Potential accuracy loss</div>
+                            <div>• Complex training dynamics</div>
+                            <div>• Limited bidirectional info</div>
+                            <div>• Architecture constraints</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel" style="flex: 1;">
+                <div class="panel-title">Implementation Stack</div>
+                <div class="tech-list" id="tech-list">
+                    <div class="tech-item">
+                        <span class="tech-name">Mamba</span>
+                        <span class="tech-status">Production</span>
+                    </div>
+                    <div class="tech-item">
+                        <span class="tech-name">RWKV</span>
+                        <span class="tech-status">Stable</span>
+                    </div>
+                    <div class="tech-item">
+                        <span class="tech-name">RetNet</span>
+                        <span class="tech-status">Research</span>
+                    </div>
+                    <div class="tech-item">
+                        <span class="tech-name">GLA</span>
+                        <span class="tech-status">Beta</span>
+                    </div>
+                    <div class="tech-item">
+                        <span class="tech-name">TTT-RNN</span>
+                        <span class="tech-status">Experimental</span>
+                    </div>
+                    <div class="tech-item">
+                        <span class="tech-name">State Space</span>
+                        <span class="tech-status">Production</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const architectureData = {
+            linear: {
+                title: "LINEAR SEQUENCE MODELING",
+                speedup: "10x",
+                memory: "1/10",
+                context: "∞",
+                accuracy: "95%",
+                description: "Transforms quadratic O(N²) attention to linear O(N) complexity through mathematical reformulation. Enables processing of unlimited sequence lengths with constant memory footprint.",
+                technologies: [
+                    {name: "Mamba", status: "Production"},
+                    {name: "RWKV", status: "Stable"},
+                    {name: "RetNet", status: "Research"},
+                    {name: "GLA", status: "Beta"},
+                    {name: "TTT-RNN", status: "Experimental"},
+                    {name: "State Space", status: "Production"}
+                ],
+                advantages: ["Constant memory usage", "Unlimited context window", "Real-time inference", "Linear scaling"],
+                challenges: ["Potential accuracy loss", "Complex training dynamics", "Limited bidirectional info", "Architecture constraints"],
+                progress: 85,
+                benchmarks: {mmlu: 87.2, hellaswag: 91.5, gsm8k: 78.9, humaneval: 65.4, truthfulqa: 72.1}
+            },
+            sparse: {
+                title: "SPARSE ATTENTION PATTERNS",
+                speedup: "5x",
+                memory: "1/5",
+                context: "16K",
+                accuracy: "98%",
+                description: "Strategic token selection reduces computation by attending only to relevant token subsets. Maintains attention expressiveness while dramatically reducing memory footprint.",
+                technologies: [
+                    {name: "Longformer", status: "Production"},
+                    {name: "BigBird", status: "Stable"},
+                    {name: "Flash Attention", status: "Production"},
+                    {name: "Sliding Window", status: "Production"},
+                    {name: "Dynamic Routing", status: "Research"},
+                    {name: "Local+Global", status: "Stable"}
+                ],
+                advantages: ["Flexible patterns", "High accuracy retention", "Easy integration", "Pattern optimization"],
+                challenges: ["Pattern design complexity", "Task-specific optimization", "Memory fragmentation", "Sparse operations"],
+                progress: 70,
+                benchmarks: {mmlu: 89.1, hellaswag: 93.2, gsm8k: 81.4, humaneval: 68.9, truthfulqa: 74.8}
+            },
+            efficient: {
+                title: "HARDWARE-OPTIMIZED ATTENTION",
+                speedup: "3x",
+                memory: "1/2",
+                context: "8K",
+                accuracy: "100%",
+                description: "Maintains mathematical equivalence while optimizing memory access patterns and computation scheduling for modern GPU architectures.",
+                technologies: [
+                    {name: "FlashAttention-3", status: "Production"},
+                    {name: "MQA", status: "Production"},
+                    {name: "GQA", status: "Production"},
+                    {name: "INT8 Quantization", status: "Stable"},
+                    {name: "Triton Kernels", status: "Production"},
+                    {name: "CUDA Graphs", status: "Stable"}
+                ],
+                advantages: ["Zero accuracy loss", "Drop-in replacement", "Hardware specific", "Production ready"],
+                challenges: ["Still O(N²) complexity", "Platform dependent", "Memory bandwidth", "Kernel optimization"],
+                progress: 90,
+                benchmarks: {mmlu: 91.7, hellaswag: 95.1, gsm8k: 85.2, humaneval: 72.6, truthfulqa: 78.3}
+            },
+            moe: {
+                title: "MIXTURE OF EXPERTS",
+                speedup: "8x",
+                memory: "1/8",
+                context: "32K",
+                accuracy: "97%",
+                description: "Conditional computation activates only relevant expert networks per token, scaling model capacity without proportional compute increase.",
+                technologies: [
+                    {name: "Mixtral", status: "Production"},
+                    {name: "DeepSeekMoE", status: "Production"},
+                    {name: "Switch Transformers", status: "Research"},
+                    {name: "Expert Choice", status: "Beta"},
+                    {name: "Soft MoE", status: "Research"},
+                    {name: "GLaM", status: "Research"}
+                ],
+                advantages: ["Massive parameter scaling", "Domain specialization", "Efficient inference", "Expert routing"],
+                challenges: ["Load balancing issues", "Training instability", "Communication overhead", "Expert utilization"],
+                progress: 75,
+                benchmarks: {mmlu: 88.9, hellaswag: 92.8, gsm8k: 83.1, humaneval: 69.7, truthfulqa: 75.9}
+            },
+            hybrid: {
+                title: "HYBRID ARCHITECTURES",
+                speedup: "6x",
+                memory: "1/4",
+                context: "64K",
+                accuracy: "99%",
+                description: "Strategic combination of linear and attention layers leverages strengths of both paradigms for optimal efficiency-quality trade-off.",
+                technologies: [
+                    {name: "Jamba", status: "Production"},
+                    {name: "Zamba", status: "Beta"},
+                    {name: "Hymba", status: "Research"},
+                    {name: "RecurrentGemma", status: "Beta"},
+                    {name: "StripedHyena", status: "Research"},
+                    {name: "Mamba-Attention", status: "Production"}
+                ],
+                advantages: ["Best of both worlds", "Flexible design", "Production ready", "Balanced trade-offs"],
+                challenges: ["Complex optimization", "Mixed requirements", "Training complexity", "Architecture search"],
+                progress: 80,
+                benchmarks: {mmlu: 90.4, hellaswag: 94.3, gsm8k: 84.7, humaneval: 71.2, truthfulqa: 77.6}
+            },
+            diffusion: {
+                title: "DIFFUSION LANGUAGE MODELS",
+                speedup: "4x",
+                memory: "1/3",
+                context: "4K",
+                accuracy: "93%",
+                description: "Non-autoregressive generation through iterative denoising enables parallel token generation, breaking sequential bottleneck.",
+                technologies: [
+                    {name: "LLADA", status: "Research"},
+                    {name: "DiffusionLM", status: "Research"},
+                    {name: "SEDD", status: "Experimental"},
+                    {name: "Block Diffusion", status: "Research"},
+                    {name: "Masked Diffusion", status: "Experimental"},
+                    {name: "AR-Diffusion", status: "Research"}
+                ],
+                advantages: ["Parallel generation", "Better controllability", "Bidirectional context", "Non-autoregressive"],
+                challenges: ["Multiple passes needed", "Fixed output length", "Training complexity", "Inference steps"],
+                progress: 60,
+                benchmarks: {mmlu: 84.6, hellaswag: 88.9, gsm8k: 75.2, humaneval: 61.8, truthfulqa: 69.4}
+            }
+        };
+        
+        function selectArchitecture(arch) {
+            // Update active state
+            document.querySelectorAll('.arch-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Find and activate the clicked item
+            const clickedItem = document.querySelector(`[onclick="selectArchitecture('${arch}')"]`);
+            if (clickedItem) {
+                clickedItem.classList.add('active');
+            }
+            
+            const data = architectureData[arch];
+            
+            // Update stats
+            document.getElementById('speedup').textContent = data.speedup;
+            document.getElementById('memory').textContent = data.memory;
+            document.getElementById('context').textContent = data.context;
+            document.getElementById('accuracy').textContent = data.accuracy;
+            
+            // Update details
+            const advantagesList = data.advantages.map(adv => `<div>• ${adv}</div>`).join('');
+            const challengesList = data.challenges.map(ch => `<div>• ${ch}</div>`).join('');
+            
+            document.getElementById('details').innerHTML = `
+                <h2>${data.title}</h2>
+                <p>${data.description}</p>
+                
+                <div class="implementation-status">
+                    <div class="metric-label">Implementation Progress</div>
+                    <div class="status-bar">
+                        <div class="status-fill" style="width: ${data.progress}%">${data.progress}% Complete</div>
+                    </div>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Advantages</h4>
+                        ${advantagesList}
+                    </div>
+                    <div class="cons">
+                        <h4>Challenges</h4>
+                        ${challengesList}
+                    </div>
+                </div>
+            `;
+            
+            // Update tech list
+            document.getElementById('tech-list').innerHTML = 
+                data.technologies.map(tech => `
+                    <div class="tech-item">
+                        <span class="tech-name">${tech.name}</span>
+                        <span class="tech-status">${tech.status}</span>
+                    </div>
+                `).join('');
+            
+            // Update benchmarks
+            const benchmarkContainer = document.getElementById('benchmarks');
+            benchmarkContainer.innerHTML = `
+                <div class="benchmark-item">
+                    <span class="benchmark-name">MMLU</span>
+                    <span class="benchmark-score">${data.benchmarks.mmlu}</span>
+                </div>
+                <div class="benchmark-item">
+                    <span class="benchmark-name">HellaSwag</span>
+                    <span class="benchmark-score">${data.benchmarks.hellaswag}</span>
+                </div>
+                <div class="benchmark-item">
+                    <span class="benchmark-name">GSM8K</span>
+                    <span class="benchmark-score">${data.benchmarks.gsm8k}</span>
+                </div>
+                <div class="benchmark-item">
+                    <span class="benchmark-name">HumanEval</span>
+                    <span class="benchmark-score">${data.benchmarks.humaneval}</span>
+                </div>
+                <div class="benchmark-item">
+                    <span class="benchmark-name">TruthfulQA</span>
+                    <span class="benchmark-score">${data.benchmarks.truthfulqa}</span>
+                </div>
+            `;
+            
+            // Update visualization
+            const seqSlider = document.getElementById('seq-slider');
+            const seqLength = seqSlider ? parseInt(seqSlider.value) : 8;
+            if (typeof drawArchitecture === 'function') {
+                drawArchitecture(arch, seqLength);
+            }
+        }
+        
+        // Initialize with linear architecture
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeVisualization();
+            selectArchitecture('linear');
+        });
+        
+        // Canvas visualization functions
+        let canvas, ctx;
+        
+        function initializeVisualization() {
+            canvas = document.getElementById('arch-canvas');
+            if (!canvas) return;
+            
+            ctx = canvas.getContext('2d');
+            
+            // Event listeners
+            const slider = document.getElementById('seq-slider');
+            if (slider) {
+                slider.addEventListener('input', (e) => {
+                    const seqLength = parseInt(e.target.value);
+                    const lengthDisplay = document.getElementById('seq-length');
+                    if (lengthDisplay) {
+                        lengthDisplay.textContent = seqLength;
+                    }
+                    const activeArch = document.querySelector('.arch-item.active');
+                    if (activeArch) {
+                        const archType = activeArch.onclick.toString().match(/'(\w+)'/)[1];
+                        drawArchitecture(archType, seqLength);
+                    }
+                });
+            }
+            
+            // Initialize visualization
+            drawArchitecture('linear', 8);
+        }
+        
+        function drawArchitecture(architecture, seqLength) {
+            if (!ctx || !canvas) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#4a90e2';
+            ctx.strokeStyle = '#4a90e2';
+            ctx.lineWidth = 1;
+            
+            const tokenSize = 20;
+            const spacing = (canvas.width - 40) / (seqLength - 1);
+            const yPos = canvas.height / 2;
+            
+            // Draw tokens
+            for (let i = 0; i < seqLength; i++) {
+                const x = 20 + i * spacing;
+                ctx.fillRect(x - tokenSize/2, yPos - tokenSize/2, tokenSize, tokenSize);
+                ctx.fillStyle = '#000';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`T${i+1}`, x, yPos + 3);
+                ctx.fillStyle = '#4a90e2';
+            }
+            
+            // Draw architecture-specific patterns
+            ctx.globalAlpha = 0.6;
+            ctx.strokeStyle = '#6bb6ff';
+            
+            switch(architecture) {
+                case 'linear':
+                    drawLinearPattern(seqLength, spacing, yPos);
+                    break;
+                case 'sparse':
+                    drawSparsePattern(seqLength, spacing, yPos);
+                    break;
+                case 'efficient':
+                    drawEfficientPattern(seqLength, spacing, yPos);
+                    break;
+                case 'moe':
+                    drawMoEPattern(seqLength, spacing, yPos);
+                    break;
+                case 'hybrid':
+                    drawHybridPattern(seqLength, spacing, yPos);
+                    break;
+                case 'diffusion':
+                    drawDiffusionPattern(seqLength, spacing, yPos);
+                    break;
+            }
+            ctx.globalAlpha = 1;
+        }
+        
+        function drawLinearPattern(seqLength, spacing, yPos) {
+            // Linear sequential connections
+            for (let i = 0; i < seqLength - 1; i++) {
+                const x1 = 20 + i * spacing;
+                const x2 = 20 + (i + 1) * spacing;
+                ctx.beginPath();
+                ctx.moveTo(x1, yPos);
+                ctx.lineTo(x2, yPos);
+                ctx.stroke();
+                
+                // Add arrow
+                ctx.beginPath();
+                ctx.moveTo(x2 - 5, yPos - 3);
+                ctx.lineTo(x2, yPos);
+                ctx.lineTo(x2 - 5, yPos + 3);
+                ctx.stroke();
+            }
+        }
+        
+        function drawSparsePattern(seqLength, spacing, yPos) {
+            // Sparse attention - local + some long range
+            for (let i = 0; i < seqLength; i++) {
+                const x1 = 20 + i * spacing;
+                
+                // Local connections
+                for (let j = Math.max(0, i-1); j <= Math.min(seqLength-1, i+1); j++) {
+                    if (i !== j) {
+                        const x2 = 20 + j * spacing;
+                        ctx.beginPath();
+                        ctx.moveTo(x1, yPos);
+                        ctx.lineTo(x2, yPos - 30);
+                        ctx.stroke();
+                    }
+                }
+                
+                // Sparse long-range connections
+                if (i % 3 === 0 && i + 4 < seqLength) {
+                    const x2 = 20 + (i + 4) * spacing;
+                    ctx.beginPath();
+                    ctx.moveTo(x1, yPos);
+                    ctx.lineTo(x2, yPos - 40);
+                    ctx.stroke();
+                }
+            }
+        }
+        
+        function drawEfficientPattern(seqLength, spacing, yPos) {
+            // All-to-all but optimized (thinner lines to show efficiency)
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < seqLength; i++) {
+                for (let j = 0; j < seqLength; j++) {
+                    if (i !== j) {
+                        const x1 = 20 + i * spacing;
+                        const x2 = 20 + j * spacing;
+                        const alpha = 0.3;
+                        ctx.globalAlpha = alpha;
+                        ctx.beginPath();
+                        ctx.moveTo(x1, yPos);
+                        ctx.lineTo(x2, yPos - 20);
+                        ctx.stroke();
+                    }
+                }
+            }
+            ctx.lineWidth = 1;
+        }
+        
+        function drawMoEPattern(seqLength, spacing, yPos) {
+            // Expert routing
+            const expertY = yPos - 60;
+            const numExperts = 3;
+            const expertSpacing = (canvas.width - 40) / (numExperts - 1);
+            
+            // Draw experts
+            ctx.fillStyle = '#ff6464';
+            for (let i = 0; i < numExperts; i++) {
+                const x = 20 + i * expertSpacing;
+                ctx.fillRect(x - 10, expertY - 10, 20, 20);
+                ctx.fillStyle = '#000';
+                ctx.fillText(`E${i+1}`, x, expertY + 3);
+                ctx.fillStyle = '#ff6464';
+            }
+            
+            // Draw routing connections
+            for (let i = 0; i < seqLength; i++) {
+                const x1 = 20 + i * spacing;
+                const expertIdx = i % numExperts;
+                const x2 = 20 + expertIdx * expertSpacing;
+                
+                ctx.strokeStyle = '#6bb6ff';
+                ctx.beginPath();
+                ctx.moveTo(x1, yPos);
+                ctx.lineTo(x2, expertY);
+                ctx.stroke();
+            }
+        }
+        
+        function drawHybridPattern(seqLength, spacing, yPos) {
+            // Mix of linear and attention
+            const midPoint = Math.floor(seqLength / 2);
+            
+            // Linear part (first half)
+            ctx.strokeStyle = '#4a90e2';
+            for (let i = 0; i < midPoint - 1; i++) {
+                const x1 = 20 + i * spacing;
+                const x2 = 20 + (i + 1) * spacing;
+                ctx.beginPath();
+                ctx.moveTo(x1, yPos);
+                ctx.lineTo(x2, yPos - 20);
+                ctx.stroke();
+            }
+            
+            // Attention part (second half)
+            ctx.strokeStyle = '#6bb6ff';
+            ctx.lineWidth = 0.5;
+            for (let i = midPoint; i < seqLength; i++) {
+                for (let j = midPoint; j < seqLength; j++) {
+                    if (i !== j) {
+                        const x1 = 20 + i * spacing;
+                        const x2 = 20 + j * spacing;
+                        ctx.beginPath();
+                        ctx.moveTo(x1, yPos);
+                        ctx.lineTo(x2, yPos - 30);
+                        ctx.stroke();
+                    }
+                }
+            }
+            ctx.lineWidth = 1;
+        }
+        
+        function drawDiffusionPattern(seqLength, spacing, yPos) {
+            // Parallel processing with noise reduction
+            const steps = 3;
+            const stepHeight = 40;
+            
+            for (let step = 0; step < steps; step++) {
+                const y = yPos - step * stepHeight;
+                ctx.strokeStyle = step === 0 ? '#ff6464' : step === 1 ? '#ffaa64' : '#4a90e2';
+                
+                // Show parallel connections at each step
+                for (let i = 0; i < seqLength; i++) {
+                    const x = 20 + i * spacing;
+                    if (step > 0) {
+                        // Connect to previous step
+                        ctx.beginPath();
+                        ctx.moveTo(x, y + stepHeight);
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                    }
+                    
+                    // Draw token at this step
+                    ctx.fillStyle = ctx.strokeStyle;
+                    ctx.fillRect(x - 8, y - 8, 16, 16);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
